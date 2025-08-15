@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ключевые Концепции Vue.js</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .slide {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in;
+            display: none;
+        }
+        .slide.active {
+            display: block;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #60a5fa;
+            margin: 1.5rem 0 1rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #1a202c;
+            margin: 1rem 0;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style: disc;
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            overflow-x: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .output {
+            font-size: 1.5rem;
+            color: #60a5fa;
+            margin: 1rem 0;
+        }
+        .emoji {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+        }
+        .icon {
+            width: 150px;
+            height: 150px;
+            margin: 1rem;
+            display: inline-block;
+        }
+        .diagram {
+            background: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            color: #1a202c;
+        }
+        #demo-app, #methods-app, #computed-app, #watchers-app {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.2rem; }
+            p, button { font-size: 1rem; }
+            .icon { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Слайд 1: Vue.js — что это? -->
+        <div class="slide active">
+            <h1><span class="emoji">🌟</span> Vue.js — что это?</h1>
+            <p><strong>Vue.js</strong> — прогрессивный JavaScript-фреймворк для создания пользовательских интерфейсов.</p>
+            <p><strong>Аналогия:</strong> Это как LEGO: вместо отдельных кирпичиков (чистый JS) вы используете систему, где детали сами соединяются и меняются!</p>
+            <p><strong>Ключевая мысль:</strong> Vue.js помогает строить <strong>интерактивные</strong> и <strong>реактивные</strong> интерфейсы.</p>
+            <div class="icon" style="background: url('https://vuejs.org/images/logo.png') center/cover;"></div>
+            <p><em>Оzvuchka: "Vue.js — твой конструктор для крутых сайтов!"</em></p>
+        </div>
+
+        <!-- Слайд 2: Экземпляр Vue -->
+        <div class="slide">
+            <h2><span class="emoji">🧠</span> Экземпляр Vue (Vue Instance)</h2>
+            <p>Это корневой объект приложения, создаваемый через <code class="highlight">createApp</code>.</p>
+            <p><strong>Аналогия:</strong> Это как "мозг" приложения, который управляет всеми данными и поведением.</p>
+            <div class="code-block">
+                &lt;div id="app"&gt;{{ message }}&lt;/div&gt;<br>
+                &lt;script&gt;<br>
+                const { createApp } = Vue;<br>
+                createApp({<br>
+                &nbsp;&nbsp;data() { return { message: 'Привет, Vue!' }; }<br>
+                }).mount('#app')<br>
+                &lt;/script&gt;
+            </div>
+            <div class="diagram">
+                <p>Vue Instance → Данные → Интерфейс</p>
+            </div>
+            <p><em>Оzvuchka: "Vue Instance — центр управления твоим сайтом!"</em></p>
+        </div>
+
+        <!-- Слайд 3: Директивы -->
+        <div class="slide">
+            <h2><span class="emoji">🪄</span> Директивы (Directives)</h2>
+            <p><strong>Директивы</strong> — это специальные атрибуты HTML с префиксом <code class="highlight">v-</code>.</p>
+            <p><strong>Аналогия:</strong> Это "супер-способности" для HTML-элементов, которые говорят Vue, что делать.</p>
+            <h3>Примеры:</h3>
+            <ul>
+                <li><code class="highlight">v-if</code>: "Покажи меня, если условие верно!" (как волшебная палочка 🪄).</li>
+                <li><code class="highlight">v-for</code>: "Склонируй меня для каждого элемента!" (как клон 👥).</li>
+                <li><code class="highlight">v-bind</code>: "Привяжи мой атрибут к данным!" (как клей 🩹).</li>
+            </ul>
+            <div class="code-block">
+                &lt;img v-bind:src="imageUrl"&gt;<br>
+                &lt;p v-if="show"&gt;Видно!&lt;/p&gt;<br>
+                &lt;li v-for="item in items"&gt;{{ item }}&lt;/li&gt;
+            </div>
+            <p><em>Оzvuchka: "Директивы делают HTML умнее!"</em></p>
+        </div>
+
+        <!-- Слайд 4: Шаблон -->
+        <div class="slide">
+            <h2><span class="emoji">📄</span> Шаблон (Template)</h2>
+            <p><strong>Шаблон</strong> — это HTML-разметка с директивами Vue, описывающая структуру.</p>
+            <p><strong>Аналогия:</strong> Это инструкция по сборке LEGO-домика: где ставить кирпичики и как они работают.</p>
+            <div class="code-block">
+                &lt;template&gt;<br>
+                &nbsp;&nbsp;&lt;div&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;input v-model="message"&gt;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&lt;p&gt;{{ message }}&lt;/p&gt;<br>
+                &nbsp;&nbsp;&lt;/div&gt;<br>
+                &lt;/template&gt;
+            </div>
+            <div id="demo-app">
+                <input v-model="message" placeholder="Введите текст">
+                <p>{{ message }}</p>
+            </div>
+            <p><em>Оzvuchka: "Шаблон — твой план для интерфейса!"</em></p>
+        </div>
+
+        <!-- Слайд 5: Реактивность -->
+        <div class="slide">
+            <h2><span class="emoji">🔄</span> Реактивность (Reactivity)</h2>
+            <p><strong>Реактивность</strong> — автоматическое обновление интерфейса при изменении данных.</p>
+            <p><strong>Аналогия:</strong> Как картинка, которая меняет цвет, когда ты берёшь другой карандаш.</p>
+            <div class="diagram">
+                <p>JS Data ↔ UI/DOM</p>
+            </div>
+            <div class="code-block">
+                data() { return { count: 0 }; },<br>
+                // Изменяем count, и интерфейс обновляется!<br>
+                &lt;p&gt;{{ count }}&lt;/p&gt;
+            </div>
+            <p><em>Оzvuchka: "Реактивность — это магия автоматического обновления!"</em></p>
+        </div>
+
+        <!-- Слайд 6: Состояние и Привязка данных -->
+        <div class="slide">
+            <h2><span class="emoji">🧠</span> Состояние и Привязка данных</h2>
+            <p><strong>Состояние</strong> — данные компонента, хранящиеся в <code class="highlight">data()</code>.</p>
+            <p><strong>Аналогия:</strong> Это "память" приложения, где хранятся важные переменные.</p>
+            <p><strong>Привязка данных:</strong></p>
+            <ul>
+                <li><code class="highlight">v-bind</code> (:): Данные → HTML (ты говоришь, что показать).</li>
+                <li><code class="highlight">v-model</code>: Данные ↔ HTML (ты и интерфейс общаетесь).</li>
+            </ul>
+            <div class="code-block">
+                &lt;input v-model="name"&gt;<br>
+                &lt;img :src="imageUrl"&gt;<br>
+                data() { return { name: '', imageUrl: 'https://example.com/image.jpg' }; }
+            </div>
+            <p><em>Оzvuchka: "Состояние и привязка — это сердце и голос Vue!"</em></p>
+        </div>
+
+        <!-- Слайд 7: Методы -->
+        <div class="slide">
+            <h2><span class="emoji">🎮</span> Методы (Methods)</h2>
+            <p><strong>Методы</strong> — функции в <code class="highlight">methods</code>, которые реагируют на действия.</p>
+            <p><strong>Аналогия:</strong> Это кнопки на пульте управления, запускающие действия.</p>
+            <div class="code-block">
+                &lt;button @click="changeText"&gt;Изменить&lt;/button&gt;<br>
+                &lt;p&gt;{{ message }}&lt;/p&gt;<br>
+                methods: {<br>
+                &nbsp;&nbsp;changeText() { this.message = 'Новый текст!'; }<br>
+                }
+            </div>
+            <div id="methods-app">
+                <button @click="changeText">Изменить</button>
+                <p>{{ message }}</p>
+            </div>
+            <p><em>Оzvuchka: "Методы — твои кнопки для действий!"</em></p>
+        </div>
+
+        <!-- Слайд 8: Вычисляемые свойства -->
+        <div class="slide">
+            <h2><span class="emoji">🧮</span> Вычисляемые свойства (Computed Properties)</h2>
+            <p><strong>Computed</strong> — свойства, вычисляемые из других данных.</p>
+            <p><strong>Аналогия:</strong> Это умный калькулятор, который пересчитывает результат при изменении данных.</p>
+            <div class="code-block">
+                &lt;input v-model="firstName"&gt;<br>
+                &lt;input v-model="lastName"&gt;<br>
+                &lt;p&gt;Полное имя: {{ fullName }}&lt;/p&gt;<br>
+                computed: {<br>
+                &nbsp;&nbsp;fullName() { return this.firstName + ' ' + this.lastName; }<br>
+                }
+            </div>
+            <div id="computed-app">
+                <input v-model="firstName" placeholder="Имя">
+                <input v-model="lastName" placeholder="Фамилия">
+                <p>Полное имя: {{ fullName }}</p>
+            </div>
+            <p><em>Оzvuchka: "Computed — твой автоматический калькулятор!"</em></p>
+        </div>
+
+        <!-- Слайд 9: Наблюдатели -->
+        <div class="slide">
+            <h2><span class="emoji">👀</span> Наблюдатели (Watchers)</h2>
+            <p><strong>Watchers</strong> — функции, отслеживающие изменения данных.</p>
+            <p><strong>Аналогия:</strong> Это охранник, который следит за дверью и сообщает, когда она открывается.</p>
+            <p><strong>Отличие от computed:</strong> Computed создают новые значения, watchers выполняют действия.</p>
+            <div class="code-block">
+                &lt;input v-model="count"&gt;<br>
+                &lt;p&gt;{{ message }}&lt;/p&gt;<br>
+                watch: {<br>
+                &nbsp;&nbsp;count(newValue) { this.message = `Счётчик: ${newValue}`; }<br>
+                }
+            </div>
+            <div id="watchers-app">
+                <input v-model.number="count" type="number">
+                <p>{{ message }}</p>
+            </div>
+            <p><em>Оzvuchka: "Watchers следят за изменениями и действуют!"</em></p>
+        </div>
+
+        <!-- Слайд 10: Итог -->
+        <div class="slide">
+            <h2><span class="emoji">🎉</span> Итог</h2>
+            <p><strong>Vue.js</strong> — это не просто инструменты, а философия, делающая разработку логичной и интуитивной.</p>
+            <ul>
+                <li><strong>Экземпляр Vue</strong>: Мозг приложения.</li>
+                <li><strong>Директивы</strong>: Супер-способности HTML.</li>
+                <li><strong>Шаблоны</strong>: Инструкции для интерфейса.</li>
+                <li><strong>Реактивность</strong>: Автоматическое обновление.</li>
+                <li><strong>Состояние и привязка</strong>: Память и синхронизация.</li>
+                <li><strong>Методы, computed, watchers</strong>: Действия, расчёты, наблюдение.</li>
+            </ul>
+            <p><strong>Ключевая мысль:</strong> Vue.js делает создание сайтов проще и увлекательнее!</p>
+            <div class="icon" style="background: url('https://vuejs.org/images/logo.png') center/cover;"></div>
+            <p><em>Оzvuchka: "Vue.js — твой билет в мир интерактивных интерфейсов!"</em></p>
+        </div>
+    </div>
+     <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem;">
+        <button id="prevBtn" disabled>Предыдущий</button>
+        <button id="nextBtn">Следующий</button>
+    </div>
+
+    <script>
+        // Навигация по слайдам
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            document.querySelector('#prevBtn').disabled = index === 0;
+            document.querySelector('#nextBtn').disabled = index === slides.length - 1;
+        }
+
+        document.querySelector('#nextBtn').addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        });
+
+        document.querySelector('#prevBtn').addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Инициализация демо после загрузки DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            const { createApp } = Vue;
+
+            // Демо для шаблона (Слайд 4)
+            createApp({
+                data() {
+                    return { message: 'Привет, Vue!' };
+                }
+            }).mount('#demo-app');
+
+            // Демо для методов (Слайд 7)
+            createApp({
+                data() {
+                    return { message: 'Нажми кнопку!' };
+                },
+                methods: {
+                    changeText() {
+                        this.message = 'Новый текст!';
+                    }
+                }
+            }).mount('#methods-app');
+
+            // Демо для вычисляемых свойств (Слайд 8)
+            createApp({
+                data() {
+                    return {
+                        firstName: '',
+                        lastName: ''
+                    };
+                },
+                computed: {
+                    fullName() {
+                        return this.firstName + ' ' + this.lastName;
+                    }
+                }
+            }).mount('#computed-app');
+
+            // Демо для наблюдателей (Слайд 9)
+            createApp({
+                data() {
+                    return {
+                        count: 0,
+                        message: 'Счётчик: 0'
+                    };
+                },
+                watch: {
+                    count(newValue) {
+                        this.message = `Счётчик: ${newValue}`;
+                    }
+                }
+            }).mount('#watchers-app');
+
+            // Показ первого слайда
+            showSlide(currentSlide);
+        });
+          
+
+       
+    </script>
+
+   
+</body>
+</html>

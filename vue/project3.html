@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Счётчик Кликов</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #38bdf8;
+        }
+        p {
+            font-size: 1.2rem;
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #60a5fa;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Счётчик Кликов</h1>
+        <p>Что делает: Увеличивает число при каждом клике по кнопке.</p>
+        <p>Что демонстрирует: Обработку событий с <code class="highlight">@click</code> и раздел <code class="highlight">methods</code>.</p>
+        <div id="app">
+            <button @click="increment">Кликни!</button> <!-- Обработчик клика -->
+            <p>Счётчик: {{ count }}</p> <!-- Выводим число -->
+        </div>
+    </div>
+
+    <script>
+        // Создаём приложение Vue
+        const { createApp } = Vue;
+        createApp({
+            // Данные приложения
+            data() {
+                return {
+                    count: 0 // Реактивная переменная для счётчика
+                };
+            },
+            // Методы приложения
+            methods: {
+                increment() {
+                    this.count++; // Увеличиваем счётчик
+                }
+            }
+        }).mount('#app'); // Привязываем Vue к элементу с id="app"
+    </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VS Code для Vue.js: Настраиваем Рабочее Место</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .slide {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in;
+            display: none;
+        }
+        .slide.active {
+            display: block;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #60a5fa;
+            margin: 1.5rem 0 1rem;
+        }
+        h3 {
+            font-size: 1.5rem;
+            color: #1a202c;
+            margin: 1rem 0;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style: disc;
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            overflow-x: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .emoji {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+        }
+        .icon {
+            width: 150px;
+            height: 150px;
+            margin: 1rem;
+            display: inline-block;
+        }
+        .diagram {
+            background: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            color: #1a202c;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.2rem; }
+            p, button { font-size: 1rem; }
+            .icon { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Слайд 1: Титульный -->
+        <div class="slide active">
+            <h1><span class="emoji">🚀</span> VS Code для Vue.js: Настраиваем Рабочее Место</h1>
+            <h2>Готовимся к созданию крутых интерфейсов!</h2>
+            <p>Настройка <strong>VS Code</strong> — это как подготовка кухни перед готовкой: всё станет быстрее, удобнее и без ошибок!</p>
+            <div class="icon" style="background: url('https://code.visualstudio.com/favicon.ico') center/cover;"></div>
+            <p><em>Аналогия: VS Code — твой верный помощник для создания сайтов на Vue.js!</em></p>
+        </div>
+
+        <!-- Слайд 2: Установка VS Code -->
+        <div class="slide">
+            <h2><span class="emoji">📥</span> Шаг 1: Установка VS Code</h2>
+            <p>Если <strong>VS Code</strong> ещё не установлен, давай сделаем это!</p>
+            <ul>
+                <li>Перейди на <a href="https://code.visualstudio.com" target="_blank">code.visualstudio.com</a>.</li>
+                <li>Нажми <strong>"Download"</strong> и выбери свою систему (Windows, macOS, Linux).</li>
+                <li>Запусти установщик и следуй инструкциям (обычно просто "Далее").</li>
+                <li>Открой <strong>VS Code</strong> — ты готов к следующему шагу!</li>
+            </ul>
+            <p><strong>Аналогия:</strong> Это как установить плиту на кухне — без неё готовить не начнёшь!</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=VS+Code+Site') center/cover;"></div>
+            <p><em>Оzvuchka: "VS Code — твой лучший друг для программирования!"</em></p>
+        </div>
+
+        <!-- Слайд 3: Установка базовых расширений -->
+        <div class="slide">
+            <h2><span class="emoji">🛠️</span> Шаг 2: Установка базовых расширений</h2>
+            <p><strong>Расширения</strong> — это как специи для готовки: добавляют новые функции!</p>
+            <h3>Список расширений:</h3>
+            <ul>
+                <li><strong>Volar</strong>: Главное расширение для Vue.js! Подсветка синтаксиса .vue-файлов, автодополнение, проверка ошибок.</li>
+                <li><strong>Vue VSCode Snippets</strong>: Быстрые шаблоны кода (&lt;template&gt;, &lt;script&gt;).</li>
+                <li><strong>Prettier</strong>: Форматирует код, чтобы он был аккуратным.</li>
+            </ul>
+            <h3>Как установить:</h3>
+            <ul>
+                <li>Открой <strong>VS Code</strong>.</li>
+                <li>Нажми на иконку "Extensions" (квадрат с 4 квадратиками).</li>
+                <li>Введи <strong>"Volar"</strong> в поиск и нажми "Install".</li>
+                <li>Повтори для <strong>"Vue VSCode Snippets"</strong> и <strong>"Prettier"</strong>.</li>
+            </ul>
+            <p><strong>Аналогия:</strong> Это как добавить умные инструменты на кухню!</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=Volar+Install') center/cover;"></div>
+            <p><em>Оzvuchka: "Volar — твой гид в мире Vue.js!"</em></p>
+        </div>
+
+        <!-- Слайд 4: Настройка Vetur -->
+        <div class="slide">
+            <h2><span class="emoji">⚙️</span> Шаг 3: Настройка Vetur (для старых проектов)</h2>
+            <p>Раньше для Vue.js использовали <strong>Vetur</strong>, но теперь <strong>Volar</strong> — стандарт. Они могут конфликтовать.</p>
+            <h3>Инструкция:</h3>
+            <ul>
+                <li>Открой панель расширений в <strong>VS Code</strong>.</li>
+                <li>Поищи <strong>"Vetur"</strong>. Если установлено, нажми "Disable" или "Uninstall".</li>
+                <li>Для новых проектов этот шаг не нужен — <strong>Volar</strong> всё сделает!</li>
+            </ul>
+            <p><strong>Аналогия:</strong> Это как убрать старую плиту, чтобы новая работала без сбоев.</p>
+            <div class="diagram">
+                <p>Vetur (старое) ➡️ Volar (новое)</p>
+            </div>
+            <p><em>Оzvuchka: "Volar — современный помощник для Vue!"</em></p>
+        </div>
+
+        <!-- Слайд 5: Создание Vue-проекта -->
+        <div class="slide">
+            <h2><span class="emoji">🏗️</span> Шаг 4: Создание первого Vue-проекта</h2>
+            <p>Мы используем <strong>Vite</strong> — быстрый инструмент для создания проектов.</p>
+            <h3>Инструкция для Vite:</h3>
+            <ul>
+                <li>Убедись, что установлен <strong>Node.js</strong> (<a href="https://nodejs.org" target="_blank">nodejs.org</a>, проверь: <code class="highlight">node -v</code>).</li>
+                <li>Открой терминал (в VS Code: "Terminal" → "New Terminal").</li>
+                <li>Перейди в папку: <code class="highlight">cd Desktop/my-vue-project</code>.</li>
+                <li>Создай проект: <code class="highlight">npm create vue@latest</code>.</li>
+                <li>Следуй подсказкам (имя проекта, TypeScript: нет, ESLint: да).</li>
+                <li>Перейди в папку: <code class="highlight">cd my-vue-project</code>.</li>
+                <li>Установи зависимости: <code class="highlight">npm install</code>.</li>
+            </ul>
+            <p><strong>Альтернатива (Vue CLI):</strong> <code class="highlight">npm install -g @vue/cli</code>, затем <code class="highlight">vue create my-project</code>.</p>
+            <p><strong>Аналогия:</strong> Vite — как быстрый строитель, создающий каркас дома за секунды!</p>
+            <div class="code-block">
+                npm create vue@latest<br>
+                cd my-vue-project<br>
+                npm install
+            </div>
+            <p><em>Оzvuchka: "Vite создаёт проект молниеносно!"</em></p>
+        </div>
+
+        <!-- Слайд 6: Запуск проекта -->
+        <div class="slide">
+            <h2><span class="emoji">🌐</span> Шаг 5: Запуск проекта</h2>
+            <p>Теперь запустим проект и увидим его в браузере!</p>
+            <h3>Инструкция:</h3>
+            <ul>
+                <li>В терминале убедись, что ты в папке проекта: <code class="highlight">cd my-vue-project</code>.</li>
+                <li>Запусти сервер: <code class="highlight">npm run dev</code>.</li>
+                <li>Открой в браузере ссылку (обычно <a href="http://localhost:5173" target="_blank">http://localhost:5173</a>).</li>
+                <li>Увидишь стартовую страницу Vue!</li>
+            </ul>
+            <p><strong>Аналогия:</strong> Это как включить плиту — проект "загорается" и готов к работе!</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=Vue+Start') center/cover;"></div>
+            <p><em>Оzvuchka: "Один клик — и твой сайт оживает!"</em></p>
+        </div>
+
+        <!-- Слайд 7: Итог -->
+        <div class="slide">
+            <h2><span class="emoji">🎉</span> Итог</h2>
+            <p>Теперь твой <strong>VS Code</strong> готов для Vue.js!</p>
+            <ul>
+                <li>Установлен <strong>VS Code</strong>.</li>
+                <li>Добавлены расширения: <strong>Volar</strong>, <strong>Vue Snippets</strong>, <strong>Prettier</strong>.</li>
+                <li>Отключен старый <strong>Vetur</strong> (если был).</li>
+                <li>Создан проект с <strong>Vite</strong>.</li>
+                <li>Запущен сервер с <strong>npm run dev</strong>.</li>
+            </ul>
+            <p>Ты готов к умному автодополнению, подсветке кода и быстрой разработке!</p>
+            <p><strong>Призыв к действию:</strong> Открой <code class="highlight">App.vue</code> и начни своё путешествие в мир Vue.js!</p>
+            <div class="icon" style="background: url('https://vuejs.org/images/logo.png') center/cover;"></div>
+            <p><em>Оzvuchka: "Твоя кухня для Vue.js готова — начинай готовить шедевры!"</em></p>
+        </div>
+    </div>
+    <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem;">
+        <button id="prevBtn" disabled>Предыдущий</button>
+        <button id="nextBtn">Следующий</button>
+    </div>
+
+    <script>
+        // Навигация по слайдам
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            document.querySelector('#prevBtn').disabled = index === 0;
+            document.querySelector('#nextBtn').disabled = index === slides.length - 1;
+        }
+
+        document.querySelector('#nextBtn').addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        });
+
+        document.querySelector('#prevBtn').addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Показ первого слайда
+        showSlide(currentSlide);
+    </script>
+
+    
+</body>
+</html>
