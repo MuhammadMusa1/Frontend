@@ -1,0 +1,31 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "A modern personal portfolio website built with Vue.js and TailwindCSS.",
+  "main": "src/main.ts",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.0.0",
+    "postcss": "^7.0.39",
+    "tailwindcss": "^2.2.19",
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0",
+    "vuex": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vue/cli-service": "^4.5.19",
+    "@vue/compiler-sfc": "^3.0.0",
+    "typescript": "^4.0.0"
+  },
+  "keywords": [
+    "vue",
+    "portfolio",
+    "tailwindcss"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
