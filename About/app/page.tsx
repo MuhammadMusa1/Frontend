@@ -112,7 +112,7 @@ export default function Portfolio() {
             <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Мухаммаджон Мусоев</h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">Бизнес/Системный Аналитик</p>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-              Специалист с 3-летним опытом работы в банковской сфере, стремящийся к карьерному росту в области data
+              Специалист с 6-летним опытом работы в банковской сфере, стремящийся к карьерному росту в области data
               science и аналитики данных
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
@@ -309,7 +309,7 @@ export default function Portfolio() {
       {/* Footer */}
       <footer className="py-8 px-4 border-t">
         <div className="container max-w-4xl mx-auto text-center text-muted-foreground">
-          <p>&copy; 2024 Мухаммаджон Мусоев. Все права защищены.</p>
+          <p>&copy; 2025 Мухаммаджон Мусоев. Все права защищены.</p>
         </div>
       </footer>
     </div>
