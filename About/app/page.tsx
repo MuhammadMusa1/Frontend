@@ -73,25 +73,25 @@ export default function Portfolio() {
   if (!mounted) return null
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background font-sans">
       {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-md">
         <div className="container flex h-16 items-center justify-between">
-          <div className="font-serif text-xl font-bold">ММ</div>
+          <div className="font-serif text-xl font-bold text-blue-600">ММ</div>
           <nav className="hidden md:flex items-center space-x-6">
-            <a href="#about" className="text-sm font-medium hover:text-primary transition-colors">
+            <a href="#about" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Обо мне
             </a>
-            <a href="#skills" className="text-sm font-medium hover:text-primary transition-colors">
+            <a href="#skills" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Навыки
             </a>
-            <a href="#experience" className="text-sm font-medium hover:text-primary transition-colors">
+            <a href="#experience" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Опыт
             </a>
-            <a href="#projects" className="text-sm font-medium hover:text-primary transition-colors">
+            <a href="#projects" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Проекты
             </a>
-            <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">
+            <a href="#contact" className="text-sm font-medium hover:text-blue-600 transition-colors">
               Контакты
             </a>
           </nav>
@@ -103,11 +103,11 @@ export default function Portfolio() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
+      <section className="py-24 px-4 bg-gradient-to-br from-blue-50 via-white to-purple-100 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 transition-colors">
         <div className="container max-w-4xl mx-auto text-center">
           <div className="mb-8">
-            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="text-4xl font-serif font-bold text-primary-foreground">ММ</span>
+            <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+              <span className="text-4xl font-serif font-bold text-white">ММ</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4">Мухаммаджон Мусоев</h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-6">Бизнес/Системный Аналитик</p>
@@ -126,22 +126,29 @@ export default function Portfolio() {
               </div>
             </div>
           </div>
-          <Button size="lg" className="mr-4">
+          <Button
+            size="lg"
+            className="mr-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:from-purple-600 hover:to-blue-600 transition"
+          >
             <Mail className="mr-2 h-4 w-4" />
             Связаться со мной
           </Button>
-          <Button variant="outline" size="lg">
+          <Button
+            variant="outline"
+            size="lg"
+            className="border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition"
+          >
             Скачать резюме
           </Button>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-4 bg-muted/50">
+      <section id="about" className="py-24 px-4 bg-muted/50">
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">Обо мне</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card>
+            <Card className="rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <GraduationCap className="h-5 w-5" />
@@ -163,7 +170,7 @@ export default function Portfolio() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5" />
@@ -182,7 +189,7 @@ export default function Portfolio() {
               </CardContent>
             </Card>
 
-            <Card className="md:col-span-2">
+            <Card className="md:col-span-2 rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Heart className="h-5 w-5" />
@@ -201,14 +208,17 @@ export default function Portfolio() {
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 px-4">
+      <section id="skills" className="py-24 px-4">
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">Навыки</h2>
           <div className="grid gap-6">
             {skills.map((skill) => {
               const Icon = skill.icon
               return (
-                <Card key={skill.name}>
+                <Card
+                  key={skill.name}
+                  className="rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+                >
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
@@ -227,12 +237,12 @@ export default function Portfolio() {
       </section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-20 px-4 bg-muted/50">
+      <section id="experience" className="py-24 px-4 bg-muted/50">
         <div className="container max-w-4xl mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">Опыт работы</h2>
           <div className="relative">
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border"></div>
-            <Card className="ml-16 relative">
+            <Card className="ml-16 relative rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl">
               <div className="absolute -left-12 top-6 w-6 h-6 bg-primary rounded-full border-4 border-background"></div>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -257,12 +267,15 @@ export default function Portfolio() {
       </section>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 px-4">
+      <section id="projects" className="py-24 px-4">
         <div className="container max-w-6xl mx-auto">
           <h2 className="text-3xl font-serif font-bold text-center mb-12">Проекты</h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="rounded-3xl shadow-lg transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+              >
                 <CardHeader>
                   <CardTitle>{project.title}</CardTitle>
                   <CardDescription>{project.description}</CardDescription>
@@ -283,22 +296,33 @@ export default function Portfolio() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 bg-muted/50">
+      <section id="contact" className="py-24 px-4 bg-muted/50">
         <div className="container max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-serif font-bold mb-8">Контакты</h2>
           <p className="text-lg text-muted-foreground mb-8">
             Готов к новым вызовам в области data science и аналитики данных
           </p>
           <div className="flex justify-center gap-4">
-            <Button size="lg" className="gap-2">
+            <Button
+              size="lg"
+              className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:from-purple-600 hover:to-blue-600 transition"
+            >
               <Mail className="h-4 w-4" />
               Email
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 bg-transparent">
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2 border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50 transition"
+            >
               <Github className="h-4 w-4" />
               GitHub
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 bg-transparent">
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2 border-2 border-blue-600 text-blue-600 bg-transparent hover:bg-blue-50 transition"
+            >
               <Linkedin className="h-4 w-4" />
               LinkedIn
             </Button>
