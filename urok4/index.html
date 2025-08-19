@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портфолио</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>{{name}}</h1>
+            <h2>{{profession}}</h2>
+            <p>{{about}}</p>
+        </header>
+        <section>
+            <h2>Мои проекты</h2>
+            <div class="projects">
+                <div class="project-card" v-for="project in projects" :key="project.id">
+                    <img :src="project.image" :alt="project.title">
+                    <h3>{{project.title}}</h3>
+                    <p>{{project.description}}</p>
+                    <a :href="project.url" target="_blank">🔗 Открыть</a>
+                </div>
+            </div>
+         </section>
+        <section>
+            <h2>Навыки</h2>
+            <div class="skills">
+                <div class="skill" v-for="skill in skills" :key="skill.id">
+                    <div class="skill-name">{{skill.name}} ({{skill.level}}%)</div>
+                </div>
+            </div>
+         </section>
+        <section>
+            <h2>Контакты</h2>
+            <div class="contacts">
+                <a :href="'mailto:' + contacts.email">📧 {{contacts.email}}</a>
+                <a :href="contacts.github" target="_blank">💻 GitHub</a>
+                <a :href="contacts.telegram" target="_blank">✈️ Telegram</a>
+            </div>
+         </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+body{
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    background: lime;
+    color: black;
+
+}
+header{
+    background: darkgreen;
+    color: white;
+    text-align: center;
+    padding: 2rem 0 1.5rem 0;
+    box-shadow: 0 2px 8px #0002;
+    position: relative;
+}
+header h1{
+    margin: 0;
+    font-size: 32px;
+}
+header h2{
+    margin: 0;
+    font-size: 24px;
+}
+section{
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+}
+h2{
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: darkgrey;
+    border-left: 10px solid darkgreen;
+    padding-left: 10px;
+}
+.projects{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API для новичков: Как программы общаются?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .slide {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in;
+            display: none;
+        }
+        .slide.active {
+            display: block;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+        }
+        h2 {
+            font-size: 2rem;
+            color: #60a5fa;
+            margin: 1.5rem 0 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        ul {
+            list-style: disc;
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .emoji {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+        }
+        .icon {
+            width: 150px;
+            height: 150px;
+            margin: 1rem;
+            display: inline-block;
+        }
+        .diagram {
+            background: #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            color: #1a202c;
+            font-size: 1.2rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
+            p, button { font-size: 1rem; }
+            .icon { width: 100px; height: 100px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Слайд 1: Титульный -->
+        <div class="slide active">
+            <h1><span class="emoji">🤝</span> API для новичков: Как программы общаются?</h1>
+            <h2>Простое объяснение сложной концепции</h2>
+            <p>Узнаем, что такое <strong>API</strong> и как они делают нашу цифровую жизнь проще!</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=API+Exchange') center/cover;"></div>
+           
+        </div>
+
+        <!-- Слайд 2: Аналогия с рестораном -->
+        <div class="slide">
+            <h2><span class="emoji">🍽️</span> Аналогия: Заказ в ресторане</h2>
+            <p>Ты — приложение, кухня — сервер с данными. Ты не идёшь на кухню сам.</p>
+            <p><strong>Официант — это API!</strong> Он берёт твой заказ (запрос), передаёт на кухню и приносит ответ (данные).</p>
+            <div class="diagram">
+                <p>Ты (приложение) → Официант (API) → Кухня (сервер) → Обратно</p>
+            </div>
+            
+        </div>
+
+        <!-- Слайд 3: Что такое API? -->
+        <div class="slide">
+            <h2><span class="emoji">❓</span> Что такое API?</h2>
+            <p><strong>API</strong> — это <strong>Application Programming Interface</strong> (Интерфейс программирования приложений).</p>
+            <p>Простыми словами: набор правил, позволяющий программам обмениваться данными.</p>
+            <p><strong>Примеры из жизни:</strong></p>
+            <ul>
+                <li>Кнопка "Войти через Google" на сайте.</li>
+                <li>Прогноз погоды в приложении.</li>
+                <li>Карта в приложении такси.</li>
+            </ul>
+            
+        </div>
+
+        <!-- Слайд 4: Web API -->
+        <div class="slide">
+            <h2><span class="emoji">🌐</span> Тип 1: Web API</h2>
+            <p><strong>Web API</strong> работают через интернет, соединяя сайты, приложения и серверы.</p>
+            <p><strong>Аналогия:</strong> Как заказ еды через сайт ресторана, а не в зале.</p>
+            <p><strong>Примеры:</strong></p>
+            <ul>
+                <li><strong>Google Maps API</strong>: Встраивает карты на сайты.</li>
+                <li><strong>Telegram Bot API</strong>: Создаёт ботов для чатов.</li>
+                <li><strong>API погоды</strong>: Показывает прогноз для городов.</li>
+            </ul>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=Web+API') center/cover;"></div>
+           
+        </div>
+
+        <!-- Слайд 5: RESTful API -->
+        <div class="slide">
+            <h2><span class="emoji">🔗</span> Тип 2: RESTful API</h2>
+            <p><strong>RESTful API</strong> — популярный вид Web API, использующий команды <strong>GET</strong>, <strong>POST</strong>, <strong>PUT</strong>, <strong>DELETE</strong>.</p>
+            <p><strong>Аналогия:</strong> Официант знает 4 команды:</p>
+            <ul>
+                <li><strong>GET</strong>: "Принеси мне данные".</li>
+                <li><strong>POST</strong>: "Запиши мой заказ".</li>
+                <li><strong>PUT</strong>: "Измени мой заказ".</li>
+                <li><strong>DELETE</strong>: "Отмени заказ".</li>
+            </ul>
+            <div class="diagram">
+                <p>GET → Принеси | POST → Запиши | PUT → Измени | DELETE → Отмени</p>
+            </div>
+           
+        </div>
+
+        <!-- Слайд 6: API баз данных -->
+        <div class="slide">
+            <h2><span class="emoji">🗄️</span> Тип 3: API баз данных</h2>
+            <p><strong>API баз данных</strong> позволяют программам работать с базами данных.</p>
+            <p><strong>Аналогия:</strong> Официант, который ходит только на склад ресторана за ингредиентами.</p>
+            <p><strong>Пример:</strong> API MongoDB позволяет добавлять, изменять и получать данные из базы.</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=Database+API') center/cover;"></div>
+           
+        </div>
+
+        <!-- Слайд 7: API операционных систем -->
+        <div class="slide">
+            <h2><span class="emoji">📱</span> Тип 4: API операционных систем</h2>
+            <p><strong>API ОС</strong> дают программам доступ к функциям системы, например, Windows или Android.</p>
+            <p><strong>Аналогия:</strong> Официант, который управляет кассовым аппаратом или светом в ресторане.</p>
+            <p><strong>Пример:</strong> API Android позволяет приложениям использовать камеру, GPS, уведомления.</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=OS+API') center/cover;"></div>
+           
+        </div>
+
+        <!-- Слайд 8: Почему API круто? -->
+        <div class="slide">
+            <h2><span class="emoji">🚀</span> Почему API — это круто?</h2>
+            <p><strong>API делают жизнь проще:</strong></p>
+            <ul>
+                <li><strong>Скорость разработки:</strong> Не пиши всё с нуля.</li>
+                <li><strong>Интеграция:</strong> Соединяй разные сервисы.</li>
+                <li><strong>Инновации:</strong> Создавай новые крутые продукты!</li>
+            </ul>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=Puzzle') center/cover;"></div>
+            
+        </div>
+
+        <!-- Слайд 9: Итоги -->
+        <div class="slide">
+            <h2><span class="emoji">🎉</span> Итоги и заключение</h2>
+            <p><strong>API</strong> — это мост, который помогает программам "разговаривать".</p>
+            <p>Они делают цифровую жизнь удобнее, соединяя сайты, приложения и устройства.</p>
+            <p><strong>Призыв к действию:</strong> В следующий раз, увидев кнопку "Поделиться", вспомни про API!</p>
+            <div class="icon" style="background: url('https://via.placeholder.com/150?text=API+Bridge') center/cover;"></div>
+            
+        </div>
+    </div>
+    <div style="position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); display: flex; gap: 1rem;">
+        <button id="prevBtn" disabled>Предыдущий</button>
+        <button id="nextBtn">Следующий</button>
+    </div>
+
+    <script>
+        // Навигация по слайдам
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            document.querySelector('#prevBtn').disabled = index === 0;
+            document.querySelector('#nextBtn').disabled = index === slides.length - 1;
+        }
+
+        document.querySelector('#nextBtn').addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        });
+
+        document.querySelector('#prevBtn').addEventListener('click', () => {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Показ первого слайда
+        showSlide(currentSlide);
+    </script>
+
+    
+</body>
+</html>

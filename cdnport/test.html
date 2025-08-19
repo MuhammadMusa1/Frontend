@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Моё портфолио</title>
+  <!-- Подключение Vue.js через CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f6f8;
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #4CAF50, #3a8d42);
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+    header h2 {
+      margin: 10px 0 20px 0;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+    section {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #222;
+      border-left: 6px solid #4CAF50;
+      padding-left: 10px;
+    }
+    /* Сетка проектов */
+    .projects {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .project-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .project-card img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+    .project-card h3 {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    .project-card p {
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      color: #555;
+    }
+    .project-card a {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #4CAF50;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .project-card a:hover {
+      background: #3a8d42;
+    }
+    /* Контакты */
+    .contacts a {
+      display: inline-block;
+      margin: 8px 12px 0 0;
+      padding: 8px 14px;
+      border: 1px solid #4CAF50;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #4CAF50;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .contacts a:hover {
+      background: #4CAF50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Секция "Обо мне" -->
+    <header>
+      <h1>{{ name }}</h1>
+      <h2>{{ profession }}</h2>
+      <p>{{ about }}</p>
+    </header>
+
+    <!-- Секция "Мои проекты" -->
+    <section>
+      <h2>Мои проекты</h2>
+      <div class="projects">
+        <div class="project-card" v-for="project in projects" :key="project.id">
+          <img :src="project.image" :alt="project.title">
+          <h3>{{ project.title }}</h3>
+          <p>{{ project.description }}</p>
+          <a :href="project.url" target="_blank">🔗 Открыть</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Секция "Контакты" -->
+    <section>
+      <h2>Контакты</h2>
+      <div class="contacts">
+        <a :href="'mailto:' + contacts.email">📧 {{ contacts.email }}</a>
+        <a :href="contacts.github" target="_blank">💻 GitHub</a>
+        <a :href="contacts.telegram" target="_blank">✈️ Telegram</a>
+      </div>
+    </section>
+  </div>
+
+  <!-- Подключаем основной JS -->
+  <script src="app.js"></script>
+</body>
+</html>
