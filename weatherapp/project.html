@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проекты для новичков в веб-разработке</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 18px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+        
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-top: 5px solid #6e8efb;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .project-icon {
+            font-size: 36px;
+            color: #6e8efb;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .project-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .project-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+        
+        .project-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-item {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            min-width: 120px;
+            color: #555;
+        }
+        
+        .detail-value {
+            color: #666;
+        }
+        
+        .steps-list {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .steps-list li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .tips {
+            background-color: #e0f7fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #00bcd4;
+            margin-top: 15px;
+        }
+        
+        .tips-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #00838f;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            max-width: 800px;
+            margin: 40px auto;
+            border-radius: 12px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-modal:hover {
+            color: #333;
+        }
+        
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            padding-right: 30px;
+        }
+        
+        .modal-body {
+            line-height: 1.6;
+        }
+        
+        .modal-body h3 {
+            margin: 20px 0 10px;
+            color: #6e8efb;
+        }
+        
+        .modal-body ul, .modal-body ol {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+        
+        .code-example {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            overflow-x: auto;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background-color: #6e8efb;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .filter-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .filter-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-laptop-code"></i> Проекты для новичков в веб-разработке</h1>
+                <p class="subtitle">Выберите проект для реализации и изучите пошаговое руководство по его созданию</p>
+                
+                <div class="filter-buttons">
+                    <button 
+                        v-for="difficulty in difficultyLevels" 
+                        :key="difficulty" 
+                        :class="['filter-btn', { active: selectedDifficulty === difficulty }]"
+                        @click="selectedDifficulty = difficulty"
+                    >
+                        {{ difficulty }}
+                    </button>
+                </div>
+            </header>
+            
+            <div class="projects-grid">
+                <div 
+                    v-for="project in filteredProjects" 
+                    :key="project.id" 
+                    class="project-card"
+                    @click="openModal(project)"
+                >
+                    <div class="project-icon">
+                        <i :class="project.icon"></i>
+                    </div>
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <p class="project-description">{{ project.description }}</p>
+                    
+                    <div class="project-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Сложность:</span>
+                            <span class="detail-value">{{ project.difficulty }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Технологии:</span>
+                            <span class="detail-value">{{ project.technologies.join(', ') }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Время:</span>
+                            <span class="detail-value">{{ project.timeRequired }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tips">
+                        <div class="tips-title">Совет:</div>
+                        <p>{{ project.tip }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal" :style="{ display: activeModal ? 'block' : 'none' }">
+                <div class="modal-content" v-if="activeModal">
+                    <span class="close-modal" @click="closeModal">&times;</span>
+                    <h2 class="modal-title">{{ activeModal.title }}</h2>
+                    
+                    <div class="modal-body">
+                        <h3>Описание проекта</h3>
+                        <p>{{ activeModal.description }}</p>
+                        
+                        <h3>Что вы изучите</h3>
+                        <ul>
+                            <li v-for="(item, index) in activeModal.learnings" :key="index">{{ item }}</li>
+                        </ul>
+                        
+                        <h3>Пошаговая реализация</h3>
+                        <ol>
+                            <li v-for="(step, index) in activeModal.steps" :key="index">{{ step }}</li>
+                        </ol>
+                        
+                        <h3>Пример кода</h3>
+                        <pre class="code-example">{{ activeModal.codeExample }}</pre>
+                        
+                        <h3>Советы по реализации</h3>
+                        <ul>
+                            <li v-for="(tip, index) in activeModal.implementationTips" :key="index">{{ tip }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                selectedDifficulty: 'Все',
+                difficultyLevels: ['Все', 'Начинающий', 'Средний', 'Продвинутый'],
+                activeModal: null,
+                projects: [
+                    {
+                        id: 1,
+                        title: 'Квиз-игра по интересам',
+                        icon: 'fas fa-question-circle',
+                        description: 'Интерактивная викторина с вопросами на различные темы и подсчетом результатов.',
+                        difficulty: 'Начинающий',
+                        technologies: ['HTML', 'CSS', 'JavaScript'],
+                        timeRequired: '4-6 часов',
+                        tip: 'Начните с простого набора вопросов и постепенно добавляйте новые функции.',
+                        learnings: [
+                            'Работа с DOM-элементами',
+                            'Обработка пользовательского ввода',
+                            'Хранение данных в массивах',
+                            'Подсчет и отображение результатов'
+                        ],
+                        steps: [
+                            'Создайте HTML-структуру с контейнером для вопросов и вариантов ответов',
+                            'Разработайте массив объектов с вопросами и ответами',
+                            'Реализуйте функцию отображения текущего вопроса',
+                            'Добавьте обработчики событий для выбора ответа',
+                            'Создайте систему подсчета баллов',
+                            'Реализуйте отображение результатов в конце квиза'
+                        ],
+                        codeExample: '// Пример структуры вопроса\nconst questions = [\n  {\n    question: "Какой язык программирования вы изучаете?",\n    answers: ["JavaScript", "Python", "Java", "C++"],\n    correct: 0\n  },\n  // ... другие вопросы\n];',
+                        implementationTips: [
+                            'Используйте localStorage для сохранения результатов между сессиями',
+                            'Добавьте таймер для каждого вопроса',
+                            'Создайте разные категории вопросов',
+                            'Реализуйте возможность выбора уровня сложности'
+                        ]
+                    },
+                    {
+                        id: 2,
+                        title: 'Генератор мемов',
+                        icon: 'fas fa-image',
+                        description: 'Приложение для создания мемов с загрузкой изображений и добавлением текста.',
+                        difficulty: 'Начинающий',
+                        technologies: ['HTML', 'CSS', 'JavaScript', 'Canvas API'],
+                        timeRequired: '5-7 часов',
+                        tip: 'Используйте Canvas API для работы с изображениями и текстом.',
+                        learnings: [
+                            'Работа с элементами Canvas',
+                            'Загрузка и отрисовка изображений',
+                            'Добавление и стилизация текста',
+                            'Скачивание готовых изображений'
+                        ],
+                        steps: [
+                            'Создайте интерфейс с полем загрузки изображения',
+                            'Реализуйте предпросмотр загруженного изображения',
+                            'Добавьте поля для ввода текста мема',
+                            'Настройте возможность изменения размера и цвета текста',
+                            'Реализуйте отрисовку текста поверх изображения с использованием Canvas',
+                            'Добавьте кнопку скачивания готового мема'
+                        ],
+                        codeExample: '// Пример отрисовки текста на canvas\nfunction drawText(canvas, text, x, y) {\n  const ctx = canvas.getContext("2d");\n  ctx.font = "30px Impact";\n  ctx.fillStyle = "white";\n  ctx.strokeStyle = "black";\n  ctx.lineWidth = 2;\n  ctx.textAlign = "center";\n  ctx.fillText(text, x, y);\n  ctx.strokeText(text, x, y);\n}',
+                        implementationTips: [
+                            'Добавьте предустановленные шаблоны мемов',
+                            'Реализуйте перетаскивание текста по canvas',
+                            'Добавьте возможность изменения шрифта',
+                            'Сохраняйте историю созданных мемов'
+                        ]
+                    },
+                    {
+                        id: 3,
+                        title: 'Трекер настроения',
+                        icon: 'fas fa-smile',
+                        description: 'Приложение для отслеживания daily настроения с визуализацией статистики.',
+                        difficulty: 'Средний',
+                        technologies: ['HTML', 'CSS', 'JavaScript', 'Chart.js'],
+                        timeRequired: '6-8 часов',
+                        tip: 'Используйте библиотеку Chart.js для создания графиков настроения.',
+                        learnings: [
+                            'Работа с внешними библиотеками',
+                            'Сохранение данных в localStorage',
+                            'Визуализация данных с помощью графиков',
+                            'Создание календаря для отслеживания'
+                        ],
+                        steps: [
+                            'Разработайте интерфейс выбора настроения (смайлики, оценка)',
+                            'Реализуйте запись выбранного настроения с текущей датой',
+                            'Сохраняйте данные в localStorage',
+                            'Создайте страницу статистики с графиком изменений настроения',
+                            'Добавьте фильтры по дате и времени',
+                            'Реализуйте экспорт данных в файл'
+                        ],
+                        codeExample: '// Пример сохранения настроения\nfunction saveMood(mood) {\n  const today = new Date().toISOString().slice(0, 10);\n  const entry = {\n    date: today,\n    mood: mood,\n    note: document.getElementById("mood-note").value\n  };\n  \n  // Получаем существующие данные или создаем новый массив\n  const history = JSON.parse(localStorage.getItem("moodHistory")) || [];\n  history.push(entry);\n  localStorage.setItem("moodHistory", JSON.stringify(history));\n}',
+                        implementationTips: [
+                            'Добавьте возможность прикрепления заметок к настроению',
+                            'Реализуйте напоминания о необходимости отметить настроение',
+                            'Создайте систему целей по улучшению настроения',
+                            'Добавьте возможность прикрепления фото к записи'
+                        ]
+                    },
+                    {
+                        id: 4,
+                        title: 'Чат-бот с шутками',
+                        icon: 'fas fa-robot',
+                        description: 'Интерактивный чат-бот, который рассказывает шутки и отвечает на простые команды.',
+                        difficulty: 'Средний',
+                        technologies: ['HTML', 'CSS', 'JavaScript'],
+                        timeRequired: '5-7 часов',
+                        tip: 'Используйте массивы с заранее подготовленными ответами и шутками.',
+                        learnings: [
+                            'Обработка пользовательского ввода',
+                            'Создание простого ИИ с шаблонными ответами',
+                            'Анимации сообщений в чате',
+                            'Работа с временными задержками (setTimeout)'
+                        ],
+                        steps: [
+                            'Создайте интерфейс чата с областью сообщений и полем ввода',
+                            'Разработайте массив шуток и ответов на частые вопросы',
+                            'Реализуйте функцию отправки сообщений от пользователя',
+                            'Напишите логику обработки сообщений и генерации ответов',
+                            'Добавьте анимации появления сообщений',
+                            'Реализуйте функцию случайного выбора шутки'
+                        ],
+                        codeExample: '// Пример базы шуток\nconst jokes = [\n  "Почему программисты так плохо танцуют? У них нет ритма... только алгоритмы!",\n  "Как называют программиста, который боится женщин? Баггист!",\n  "Сколько программистов нужно, чтобы вкрутить лампочку? Ни одного, это hardware проблема!"\n];\n\nfunction getRandomJoke() {\n  return jokes[Math.floor(Math.random() * jokes.length)];\n}',
+                        implementationTips: [
+                            'Добавьте темы шуток (программистские, общие, детские)',
+                            'Реализуйте обучение бота новым шуткам',
+                            'Добавьте голосовое озвучивание шуток',
+                            'Создайте систему оценки шуток пользователями'
+                        ]
+                    },
+                    {
+                        id: 5,
+                        title: 'Планировщик тренировок',
+                        icon: 'fas fa-dumbbell',
+                        description: 'Приложение для создания и отслеживания планов тренировок с таймером упражнений.',
+                        difficulty: 'Средний',
+                        technologies: ['HTML', 'CSS', 'JavaScript'],
+                        timeRequired: '8-10 часов',
+                        tip: 'Используйте localStorage для сохранения планов тренировок.',
+                        learnings: [
+                            'Создание сложных форм с динамическими полями',
+                            'Работа с временными интервалами (таймеры)',
+                            'Сохранение и загрузка сложных структур данных',
+                            'Валидация пользовательского ввода'
+                        ],
+                        steps: [
+                            'Разработайте интерфейс создания тренировочных программ',
+                            'Реализуйте возможность добавления упражнений с параметрами (подходы, повторения, вес)',
+                            'Создайте таймер для отсчета времени выполнения упражнений',
+                            'Добавьте трекинг выполненных тренировок',
+                            'Реализуйте статистику прогресса',
+                            'Добавьте библиотеку готовых упражнений'
+                        ],
+                        codeExample: '// Пример структуры тренировки\nconst workout = {\n  name: "Силовая тренировка",\n  exercises: [\n    {\n      name: "Приседания",\n      sets: 4,\n      reps: 10,\n      weight: 70,\n      rest: 90\n    },\n    {\n      name: "Жим лежа",\n      sets: 4,\n      reps: 8,\n      weight: 60,\n      rest: 120\n    }\n  ]\n};',
+                        implementationTips: [
+                            'Добавьте демонстрацию техники выполнения упражнений с GIF или видео',
+                            'Реализуйте калькулятор одноповторного максимума',
+                            'Добавьте интеграцию с календарем для планирования тренировок',
+                            'Создайте систему напоминаний о тренировках'
+                        ]
+                    },
+                    {
+                        id: 6,
+                        title: 'Простой блог или список заметок',
+                        icon: 'fas fa-sticky-note',
+                        description: 'Минималистичное приложение для создания и управления заметками или blog-постами.',
+                        difficulty: 'Начинающий',
+                        technologies: ['HTML', 'CSS', 'JavaScript'],
+                        timeRequired: '3-5 часов',
+                        tip: 'Используйте contenteditable для простого редактирования текста.',
+                        learnings: [
+                            'CRUD операции (создание, чтение, обновление, удаление)',
+                            'Работа с localStorage',
+                            'Создание динамического интерфейса',
+                            'Форматирование текста'
+                        ],
+                        steps: [
+                            'Создайте интерфейс со списком заметок и областью редактирования',
+                            'Реализуйте возможность создания новых заметок',
+                            'Добавьте функции редактирования и удаления заметок',
+                            'Реализуйте сохранение заметок в localStorage',
+                            'Добавьте возможность поиска по заметкам',
+                            'Реализуйте простые возможности форматирования текста (жирный, курсив)'
+                        ],
+                        codeExample: '// Пример сохранения заметок\nfunction saveNotes() {\n  const notes = [];\n  document.querySelectorAll(".note").forEach(noteEl => {\n    notes.push({\n      title: noteEl.querySelector(".note-title").textContent,\n      content: noteEl.querySelector(".note-content").innerHTML,\n      id: noteEl.dataset.id\n    });\n  });\n  localStorage.setItem("notes", JSON.stringify(notes));\n}',
+                        implementationTips: [
+                            'Добавьте возможность категоризации заметок с помощью тегов',
+                            'Реализуйте режим презентации для заметок',
+                            'Добавьте возможность экспорта заметок в PDF',
+                            'Реализуйте синхронизацию между устройствами с помощью Firebase'
+                        ]
+                    },
+                    {
+                        id: 7,
+                        title: 'Виртуальный питомец',
+                        icon: 'fas fa-cat',
+                        description: 'Игра с виртуальным питомцем, за которым нужно ухаживать и развивать.',
+                        difficulty: 'Продвинутый',
+                        technologies: ['HTML', 'CSS', 'JavaScript', 'Canvas'],
+                        timeRequired: '10-15 часов',
+                        tip: 'Используйте requestAnimationFrame для плавной анимации.',
+                        learnings: [
+                            'Создание игрового цикла',
+                            'Работа с анимациями и спрайтами',
+                            'Реализация искусственного интеллекта для питомца',
+                            'Создание сложной системы состояний'
+                        ],
+                        steps: [
+                            'Разработайте спрайты и анимации для питомца',
+                            'Создайте систему потребностей (голод, счастье, энергия)',
+                            'Реализуйте игровой цикл с постепенным изменением состояний',
+                            'Добавьте интерактивные элементы для ухода за питомцем',
+                            'Создайте систему эволюции/роста питомца',
+                            'Реализуйте сохранение состояния питомца'
+                        ],
+                        codeExample: '// Пример игрового цикла\nfunction gameLoop() {\n  updateNeeds();\n  updateAnimation();\n  checkMood();\n  requestAnimationFrame(gameLoop);\n}\n\nfunction updateNeeds() {\n  // Уменьшаем показатели со временем\n  pet.hunger -= 0.01;\n  pet.happiness -= 0.005;\n  pet.energy -= 0.003;\n  \n  // Ограничиваем значения от 0 до 100\n  pet.hunger = Math.max(0, Math.min(100, pet.hunger));\n  // ... и так для остальных показателей\n}',
+                        implementationTips: [
+                            'Добавьте мини-игры для взаимодействия с питомцем',
+                            'Реализуйте систему достижений и наград',
+                            'Добавьте возможность кастомизации питомца',
+                            'Создайте мультиplayer-режим с взаимодействием питомцев'
+                        ]
+                    },
+                    {
+                        id: 8,
+                        title: 'Интерактивная карта желаний',
+                        icon: 'fas fa-star',
+                        description: 'Визуальная доска для создания и отслеживания целей и желаний.',
+                        difficulty: 'Средний',
+                        technologies: ['HTML', 'CSS', 'JavaScript', 'Drag & Drop API'],
+                        timeRequired: '6-8 часов',
+                        tip: 'Используйте HTML5 Drag & Drop API для перемещения элементов.',
+                        learnings: [
+                            'Работа с Drag & Drop API',
+                            'Создание интерактивного интерфейса',
+                            'Визуализация прогресса целей',
+                            'Работа с медиа-контентом (изображения, видео)'
+                        ],
+                        steps: [
+                            'Создайте сетку или свободную область для размещения целей',
+                            'Реализуйте добавление новых целей с описанием и изображением',
+                            'Добавьте возможность перемещения и изменения размера элементов',
+                            'Реализуйте систему категорий и тегов для целей',
+                            'Добавьте визуализацию прогресса выполнения целей',
+                            'Реализуйте сохранение состояния доски'
+                        ],
+                        codeExample: '// Пример обработки drag and drop\nfunction handleDragStart(e) {\n  e.dataTransfer.setData("text/plain", e.target.id);\n  e.target.classList.add("dragging");\n}\n\nfunction handleDragOver(e) {\n  e.preventDefault();\n  e.dataTransfer.dropEffect = "move";\n}\n\nfunction handleDrop(e) {\n  e.preventDefault();\n  const id = e.dataTransfer.getData("text/plain");\n  const draggable = document.getElementById(id);\n  e.target.appendChild(draggable);\n  draggable.classList.remove("dragging");\n}',
+                        implementationTips: [
+                            'Добавьте возможность прикрепления вдохновляющих изображений к целям',
+                            'Реализуйте напоминания о целях',
+                            'Добавьте возможность делиться целями в социальных сетях',
+                            'Создайте систему мотивационных цитат для каждой цели'
+                        ]
+                    },
+                    {
+                        id: 9,
+                        title: 'Трекер привычек',
+                        icon: 'fas fa-check-circle',
+                        description: 'Приложение для формирования и отслеживания полезных привычек с напоминаниями.',
+                        difficulty: 'Средний',
+                        technologies: ['HTML', 'CSS', 'JavaScript', 'LocalStorage'],
+                        timeRequired: '5-7 часов',
+                        tip: 'Используйте календарь для визуализации последовательности выполнения привычек.',
+                        learnings: [
+                            'Работа с датами и временем',
+                            'Создание календарного интерфейса',
+                            'Логика напоминаний и уведомлений',
+                            'Визуализация данных и статистики'
+                        ],
+                        steps: [
+                            'Создайте интерфейс добавления привычек с параметрами (периодичность, цель)',
+                            'Реализуйте календарь для отметки выполнения привычек',
+                            'Добавьте систему уведомлений/напоминаний',
+                            'Разработайте страницу статистики с прогрессом',
+                            'Реализуйте мотивационные элементы (серии выполнений, награды)',
+                            'Добавьте возможность экспорта данных'
+                        ],
+                        codeExample: '// Пример структуры привычки\nconst habit = {\n  name: "Утренняя зарядка",\n  description: "15 минут упражнений каждое утро",\n  frequency: "daily", // daily, weekly, monthly\n  goal: 30, // цель в днях\n  completedDates: ["2023-10-01", "2023-10-02", "2023-10-03"]\n};',
+                        implementationTips: [
+                            'Добавьте возможность прикрепления фото-подтверждений выполнения привычки',
+                            'Реализуйте систему друзей для совместного отслеживания привычек',
+                            'Добавьте challenges (челленджи) на неделю/месяц',
+                            'Интегрируйте с健康 приложениями через API'
+                        ]
+                    }
+                ]
+            },
+            computed: {
+                filteredProjects() {
+                    if (this.selectedDifficulty === 'Все') {
+                        return this.projects;
+                    }
+                    return this.projects.filter(project => project.difficulty === this.selectedDifficulty);
+                }
+            },
+            methods: {
+                openModal(project) {
+                    this.activeModal = project;
+                    document.body.style.overflow = 'hidden';
+                },
+                closeModal() {
+                    this.activeModal = null;
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

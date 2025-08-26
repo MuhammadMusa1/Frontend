@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прогноз погоды</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px 0 0 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #6e8efb;
+        }
+        
+        .search-box button {
+            padding: 12px 20px;
+            background-color: #6e8efb;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        .search-box button:hover {
+            background-color: #5a7de4;
+        }
+        
+        .weather-card {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            border-radius: 12px;
+            padding: 25px;
+            color: white;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .weather-card.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .city-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .weather-icon {
+            font-size: 70px;
+            margin: 15px 0;
+        }
+        
+        .temperature {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .weather-description {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .weather-details {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            padding-top: 20px;
+        }
+        
+        .detail {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .detail i {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        
+        .error-message {
+            color: #ff6b6b;
+            margin-top: 15px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .error-message.active {
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #6e8efb;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        footer {
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+            .temperature {
+                font-size: 36px;
+            }
+            .weather-icon {
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1><i class="fas fa-cloud-sun"></i> Прогноз погоды</h1>
+            
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    placeholder="Введите название города..." 
+                    v-model="city" 
+                    @keyup.enter="getWeather"
+                >
+                <button @click="getWeather">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <div class="loading" :class="{ active: loading }">
+                <div class="spinner"></div>
+                <p>Загрузка данных...</p>
+            </div>
+            
+            <div class="error-message" :class="{ active: error && error.length }">
+                {{ error }}
+            </div>
+            
+            <div class="weather-card" :class="{ active: weatherData }" v-if="weatherData">
+                <h2 class="city-name">
+                    <i class="fas fa-map-marker-alt"></i> {{ weatherData.name }}, {{ weatherData.sys.country }}
+                </h2>
+                
+                <div class="weather-icon">
+                    <i :class="weatherIcon"></i>
+                </div>
+                
+                <div class="temperature">{{ Math.round(weatherData.main.temp) }}°C</div>
+                
+                <div class="weather-description">{{ capitalizeFirstLetter(weatherData.weather[0].description) }}</div>
+                
+                <div class="weather-details">
+                    <div class="detail">
+                        <i class="fas fa-temperature-high"></i>
+                        <span>Ощущается как</span>
+                        <span>{{ Math.round(weatherData.main.feels_like) }}°C</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-tint"></i>
+                        <span>Влажность</span>
+                        <span>{{ weatherData.main.humidity }}%</span>
+                    </div>
+                    <div class="detail">
+                        <i class="fas fa-wind"></i>
+                        <span>Ветер</span>
+                        <span>{{ Math.round(weatherData.wind.speed) }} м/с</span>
+                    </div>
+                </div>
+            </div>
+            
+            <footer>
+                <p>Данные предоставлены OpenWeatherMap</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                city: '',
+                weatherData: null,
+                loading: false,
+                error: ''
+            },
+            computed: {
+                weatherIcon() {
+                    if (!this.weatherData || !this.weatherData.weather[0]) return 'fas fa-question';
+                    
+                    const iconCode = this.weatherData.weather[0].icon;
+                    const iconMap = {
+                        '01d': 'fas fa-sun',
+                        '01n': 'fas fa-moon',
+                        '02d': 'fas fa-cloud-sun',
+                        '02n': 'fas fa-cloud-moon',
+                        '03d': 'fas fa-cloud',
+                        '03n': 'fas fa-cloud',
+                        '04d': 'fas fa-cloud',
+                        '04n': 'fas fa-cloud',
+                        '09d': 'fas fa-cloud-showers-heavy',
+                        '09n': 'fas fa-cloud-showers-heavy',
+                        '10d': 'fas fa-cloud-sun-rain',
+                        '10n': 'fas fa-cloud-moon-rain',
+                        '11d': 'fas fa-bolt',
+                        '11n': 'fas fa-bolt',
+                        '13d': 'fas fa-snowflake',
+                        '13n': 'fas fa-snowflake',
+                        '50d': 'fas fa-smog',
+                        '50n': 'fas fa-smog'
+                    };
+                    
+                    return iconMap[iconCode] || 'fas fa-question';
+                }
+            },
+            methods: {
+                getWeather() {
+                    if (!this.city.trim()) {
+                        this.error = 'Пожалуйста, введите название города';
+                        return;
+                    }
+                    
+                    this.loading = true;
+                    this.error = '';
+                    
+                    const apiKey = 'c2cf9aa843364a6587faf9167aaa2996996';
+                    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(this.city)}&units=metric&appid=${apiKey}&lang=ru`;
+                    
+                    fetch(apiUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                if (response.status === 404) {
+                                    throw new Error('Город не найден. Проверьте правильность написания.');
+                                } else if (response.status === 401) {
+                                    throw new Error('Недействительный API-ключ.');
+                                } else {
+                                    throw new Error('Ошибка сервера. Попробуйте позже.');
+                                }
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            this.weatherData = data;
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            this.error = error.message || 'Произошла ошибка при загрузке данных. Попробуйте позже.';
+                            this.weatherData = null;
+                            this.loading = false;
+                        });
+                },
+                capitalizeFirstLetter(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
+            },
+            mounted() {
+                this.$el.querySelector('input').focus();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальный питомец</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .pet-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 20px;
+        }
+        
+        .pet {
+            width: 200px;
+            height: 200px;
+            background-color: #ffcc80;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .pet-face {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .eye {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border-radius: 50%;
+            top: 70px;
+            border: 2px solid #333;
+        }
+        
+        .eye.left {
+            left: 50px;
+        }
+        
+        .eye.right {
+            right: 50px;
+        }
+        
+        .pupil {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #333;
+            border-radius: 50%;
+            top: 7px;
+            left: 7px;
+            transition: all 0.2s ease;
+        }
+        
+        .mouth {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background-color: #ff5722;
+            border-radius: 0 0 40px 40px;
+            bottom: 50px;
+            left: 60px;
+            transition: all 0.3s ease;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px;
+            min-width: 150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6e8efb;
+            margin-top: 5px;
+        }
+        
+        .stat-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .stat-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+        
+        .hunger-fill {
+            background-color: #ff9800;
+        }
+        
+        .happiness-fill {
+            background-color: #4caf50;
+        }
+        
+        .energy-fill {
+            background-color: #2196f3;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .action-btn {
+            background-color: #6e8efb;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            margin: 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .action-btn:active {
+            transform: translateY(0);
+        }
+        
+        .action-btn.feed {
+            background-color: #ff9800;
+        }
+        
+        .action-btn.play {
+            background-color: #4caf50;
+        }
+        
+        .action-btn.sleep {
+            background-color: #2196f3;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e0f7fa;
+            border-radius: 10px;
+            color: #007c91;
+            font-weight: bold;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pet-state {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        /* Анимации */
+        @keyframes bounce {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        @keyframes eat {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-50%, -50%) rotate(-5deg); }
+            75% { transform: translate(-50%, -50%) rotate(5deg); }
+        }
+        
+        @keyframes sleep {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.95); }
+        }
+        
+        .bounce {
+            animation: bounce 0.5s ease infinite;
+        }
+        
+        .eat {
+            animation: eat 0.5s ease infinite;
+        }
+        
+        .sleep {
+            animation: sleep 1s ease infinite;
+        }
+        
+        /* Эмоции */
+        .happy .mouth {
+            height: 20px;
+            border-radius: 40px 40px 0 0;
+            background-color: #4caf50;
+        }
+        
+        .sad .mouth {
+            height: 10px;
+            width: 60px;
+            border-radius: 0 0 40px 40px;
+            background-color: #f44336;
+            bottom: 60px;
+            left: 70px;
+        }
+        
+        .sleeping .eye {
+            height: 5px;
+            border-radius: 50%;
+        }
+        
+        .sleeping .pupil {
+            display: none;
+        }
+        
+        .sleeping .mouth {
+            height: 5px;
+            width: 40px;
+        }
+        
+        /* Эволюция */
+        .evolved .pet {
+            background-color: #ffa726;
+            border-radius: 40% 40% 50% 50%;
+        }
+        
+        .evolved .eye {
+            top: 60px;
+        }
+        
+        .evolved .mouth {
+            width: 60px;
+            height: 30px;
+            bottom: 40px;
+            left: 70px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 Виртуальный Питомец 🐾</h1>
+        
+        <div class="pet-container">
+            <div class="pet" id="pet">
+                <div class="pet-face">
+                    <div class="eye left">
+                        <div class="pupil"></div>
+                    </div>
+                    <div class="eye right">
+                        <div class="pupil"></div>
+                    </div>
+                    <div class="mouth"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pet-state" id="petState">Питомец доволен и полон энергии!</div>
+        
+        <div class="stats">
+            <div class="stat">
+                <h3>Голод</h3>
+                <div class="stat-value" id="hungerValue">100%</div>
+                <div class="stat-bar">
+                    <div class="stat-fill hunger-fill" id="hungerBar" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div class="stat">
+                <h3>Счастье</h3>
+                <div class="stat-value" id="happinessValue">100%</div>
+                <div class="stat-bar">
+                    <div class="stat-fill happiness-fill" id="happinessBar" style="width: 100%;"></div>
+                </div>
+            </div>
+            
+            <div class="stat">
+                <h3>Энергия</h3>
+                <div class="stat-value" id="energyValue">100%</div>
+                <div class="stat-bar">
+                    <div class="stat-fill energy-fill" id="energyBar" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="action-btn feed" id="feedBtn">🍕 Накормить</button>
+            <button class="action-btn play" id="playBtn">🎮 Поиграть</button>
+            <button class="action-btn sleep" id="sleepBtn">💤 Уложить спать</button>
+        </div>
+        
+        <div class="message" id="message">
+            Привет! Я твой новый питомец. Позаботься обо мне!
+        </div>
+    </div>
+
+    <script>
+        // Состояние питомца
+        const pet = {
+            hunger: 100,
+            happiness: 100,
+            energy: 100,
+            isSleeping: false,
+            isEvolving: false,
+            age: 0,
+            stage: 'baby' // baby, teen, adult
+        };
+        
+        // Элементы DOM
+        const petElement = document.getElementById('pet');
+        const hungerValue = document.getElementById('hungerValue');
+        const happinessValue = document.getElementById('happinessValue');
+        const energyValue = document.getElementById('energyValue');
+        const hungerBar = document.getElementById('hungerBar');
+        const happinessBar = document.getElementById('happinessBar');
+        const energyBar = document.getElementById('energyBar');
+        const messageElement = document.getElementById('message');
+        const petStateElement = document.getElementById('petState');
+        const feedBtn = document.getElementById('feedBtn');
+        const playBtn = document.getElementById('playBtn');
+        const sleepBtn = document.getElementById('sleepBtn');
+        
+        // Обновление интерфейса на основе состояния питомца
+        function updateUI() {
+            // Обновляем значения
+            hungerValue.textContent = `${pet.hunger}%`;
+            happinessValue.textContent = `${pet.happiness}%`;
+            energyValue.textContent = `${pet.energy}%`;
+            
+            // Обновляем полосы прогресса
+            hungerBar.style.width = `${pet.hunger}%`;
+            happinessBar.style.width = `${pet.happiness}%`;
+            energyBar.style.width = `${pet.energy}%`;
+            
+            // Обновляем эмоции питомца
+            updatePetEmotion();
+            
+            // Проверяем эволюцию
+            checkEvolution();
+        }
+        
+        // Обновление эмоций питомца на основе его состояния
+        function updatePetEmotion() {
+            // Сбрасываем все классы эмоций
+            petElement.classList.remove('happy', 'sad', 'sleeping', 'bounce', 'eat', 'sleep');
+            
+            if (pet.isSleeping) {
+                petElement.classList.add('sleeping');
+                petStateElement.textContent = "Zzzz... Питомец крепко спит.";
+                return;
+            }
+            
+            // Определяем эмоцию на основе состояния
+            if (pet.happiness >= 70 && pet.hunger >= 50 && pet.energy >= 50) {
+                petElement.classList.add('happy', 'bounce');
+                petStateElement.textContent = "Питомец счастлив и доволен!";
+            } else if (pet.hunger < 30 || pet.happiness < 30 || pet.energy < 20) {
+                petElement.classList.add('sad');
+                
+                if (pet.hunger < 30) {
+                    petStateElement.textContent = "Питомец очень голоден! Покорми меня!";
+                } else if (pet.happiness < 30) {
+                    petStateElement.textContent = "Питомцу скучно! Поиграй со мной!";
+                } else if (pet.energy < 20) {
+                    petStateElement.textContent = "Питомец устал! Мне нужно поспать.";
+                }
+            } else {
+                petStateElement.textContent = "Питомец в хорошем настроении.";
+            }
+        }
+        
+        // Проверка эволюции питомца
+        function checkEvolution() {
+            if (pet.age > 10 && pet.stage === 'baby') {
+                evolvePet('teen');
+            } else if (pet.age > 30 && pet.stage === 'teen') {
+                evolvePet('adult');
+            }
+        }
+        
+        // Эволюция питомца
+        function evolvePet(newStage) {
+            if (pet.stage === newStage) return;
+            
+            pet.isEvolving = true;
+            pet.stage = newStage;
+            
+            // Показываем сообщение об эволюции
+            showMessage("Ваш питомец эволюционировал!");
+            
+            // Добавляем класс для измененного внешнего вида
+            if (newStage === 'teen' || newStage === 'adult') {
+                petElement.classList.add('evolved');
+            }
+            
+            setTimeout(() => {
+                pet.isEvolving = false;
+            }, 2000);
+        }
+        
+        // Показать сообщение
+        function showMessage(text) {
+            messageElement.textContent = text;
+            
+            // Автоматически скрываем сообщение через 3 секунды
+            setTimeout(() => {
+                if (messageElement.textContent === text) {
+                    messageElement.textContent = "";
+                }
+            }, 3000);
+        }
+        
+        // Накормить питомца
+        feedBtn.addEventListener('click', () => {
+            if (pet.isSleeping) {
+                showMessage("Питомец спит! Разбудите его, чтобы покормить.");
+                return;
+            }
+            
+            pet.hunger = Math.min(100, pet.hunger + 30);
+            pet.energy = Math.min(100, pet.energy + 5);
+            
+            // Анимация eating
+            petElement.classList.add('eat');
+            showMessage("Ням-ням! Вкусно!");
+            
+            setTimeout(() => {
+                petElement.classList.remove('eat');
+            }, 1000);
+            
+            updateUI();
+        });
+        
+        // Поиграть с питомцем
+        playBtn.addEventListener('click', () => {
+            if (pet.isSleeping) {
+                showMessage("Питомец спит! Дайте ему отдохнуть.");
+                return;
+            }
+            
+            if (pet.energy < 10) {
+                showMessage("Питомец слишком устал для игр.");
+                return;
+            }
+            
+            pet.happiness = Math.min(100, pet.happiness + 25);
+            pet.energy = Math.max(0, pet.energy - 15);
+            pet.hunger = Math.max(0, pet.hunger - 10);
+            
+            // Анимация игры
+            showMessage("Ура! Играем!");
+            
+            updateUI();
+        });
+        
+        // Уложить питомца спать
+        sleepBtn.addEventListener('click', () => {
+            if (pet.isSleeping) {
+                // Разбудить
+                pet.isSleeping = false;
+                sleepBtn.textContent = "💤 Уложить спать";
+                showMessage("Питомец проснулся!");
+                
+                // Сбрасываем анимацию сна
+                petElement.classList.remove('sleep');
+            } else {
+                // Уложить спать
+                pet.isSleeping = true;
+                sleepBtn.textContent = "⏰ Разбудить";
+                showMessage("Питомец сладко спит...");
+                
+                // Анимация сна
+                petElement.classList.add('sleep');
+            }
+            
+            updateUI();
+        });
+        
+        // Игровой цикл - постепенное изменение состояния питомца
+        setInterval(() => {
+            if (!pet.isSleeping) {
+                // Уменьшаем показатели, когда питомец бодрствует
+                pet.hunger = Math.max(0, pet.hunger - 0.5);
+                pet.happiness = Math.max(0, pet.happiness - 0.3);
+                pet.energy = Math.max(0, pet.energy - 0.4);
+                
+                // Увеличиваем возраст
+                pet.age += 0.1;
+            } else {
+                // Восстанавливаем энергию во время сна
+                pet.energy = Math.min(100, pet.energy + 1);
+                
+                // Немного уменьшаем голод и счастье
+                pet.hunger = Math.max(0, pet.hunger - 0.1);
+                pet.happiness = Math.max(0, pet.happiness - 0.1);
+            }
+            
+            updateUI();
+        }, 3000); // Обновляем каждые 3 секунды
+        
+        // Инициализация
+        updateUI();
+        showMessage("Добро пожаловать! Это ваш виртуальный питомец.");
+    </script>
+</body>
+</html>

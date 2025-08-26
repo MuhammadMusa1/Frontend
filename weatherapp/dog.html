@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Виртуальный питомец</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --panel:#111827cc;     /* gray-900 + alpha */
+      --accent:#22d3ee;      /* cyan-400 */
+      --accent-2:#a78bfa;    /* violet-400 */
+      --good:#10b981;        /* emerald-500 */
+      --warn:#f59e0b;        /* amber-500 */
+      --bad:#ef4444;         /* red-500 */
+      --white:#e5e7eb;       /* gray-200 */
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,#0b1226, var(--bg));
+      color:var(--white); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      display:grid; place-items:center; padding:16px;
+    }
+    .app{width:min(1100px,100%); display:grid; gap:12px; grid-template-columns: 320px 1fr;}
+    @media (max-width: 860px){ .app{grid-template-columns: 1fr;} }
+
+    .card{background:var(--panel); border:1px solid #1f2937; border-radius:16px; box-shadow:0 6px 24px #0006;}
+    .left{padding:14px; display:flex; flex-direction:column; gap:12px}
+    .right{padding:14px; display:grid; grid-template-rows: auto 1fr auto; gap:12px}
+
+    .title{display:flex; align-items:center; gap:10px;}
+    .title h1{font-size:20px; margin:0}
+    .small{opacity:.8; font-size:12px}
+
+    .scene{position:relative; height:420px; border-radius:14px; overflow:hidden; background:linear-gradient(180deg,#0ea5e9 0 45%, #86efac 46% 100%);} /* sky & grass */
+    .ground{position:absolute; inset:auto 0 0 0; height:42%; background:repeating-linear-gradient(90deg,#22c55e 0 10px,#16a34a 10px 20px); filter:saturate(0.8) brightness(0.9);}
+
+    .pet{ position:absolute; left:50%; top:56%; transform:translate(-50%,-50%); width:140px; height:140px; display:grid; place-items:center; }
+    .pet .sprite{ width:120px; height:120px; border-radius:28px; display:grid; place-items:center; font-size:60px; box-shadow: inset 0 -8px 0 #0003, 0 10px 20px #0005;}
+    .pet.idle .sprite{ animation:bob 2.2s ease-in-out infinite; }
+    .pet.playing .sprite{ animation:joy 0.9s ease-in-out infinite; }
+    .pet.sleeping .sprite{ filter:grayscale(.1) brightness(.9); }
+    .pet.eating .sprite{ animation:eat 1.2s ease-in-out infinite; }
+    .pet.sick .sprite{ filter:hue-rotate(-30deg) saturate(.7); }
+    @keyframes bob{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-8px) } }
+    @keyframes joy{ 0%,100%{ transform:translateY(0) rotate(0) } 25%{ transform:translateY(-10px) rotate(-4deg) } 75%{ transform:translateY(-10px) rotate(4deg) } }
+    @keyframes eat{ 0%,100%{ transform:scale(1) } 50%{ transform:scale(1.05) } }
+
+    .bubbles{ position:absolute; inset:0; pointer-events:none; }
+    .bubble{ position:absolute; width:12px; height:12px; border-radius:50%; background:#fff8; animation:rise 3s linear forwards; }
+    @keyframes rise{ to{ transform:translateY(-320px); opacity:0 } }
+
+    .toolbar{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; }
+    .toolbar button{ cursor:pointer; padding:10px 12px; border-radius:12px; border:1px solid #334155; background:#0b1226; color:var(--white); font-weight:600; }
+    .toolbar button:hover{ border-color:#475569; }
+    .toolbar .primary{ background:linear-gradient(180deg,var(--accent),var(--accent-2)); border:0; color:#0a0a0a; }
+
+    .stats{ display:grid; gap:8px; }
+    .bar{ display:grid; gap:6px; }
+    .bar label{ display:flex; justify-content:space-between; font-size:12px; opacity:.9; }
+    .bar progress{ width:100%; height:12px; -webkit-appearance:none; appearance:none; }
+    progress::-webkit-progress-bar{ background:#111827; border-radius:999px; }
+    progress::-webkit-progress-value{ background:linear-gradient(90deg, var(--good), var(--accent)); border-radius:999px; }
+
+    .state-line{ padding:8px 10px; border:1px dashed #334155; border-radius:12px; font-size:13px; }
+
+    .row{ display:flex; gap:8px; align-items:center; flex-wrap:wrap }
+    .select{ padding:6px 8px; border-radius:10px; background:#0b1226; border:1px solid #334155; color:var(--white); }
+
+    .log{ background:#0008; border-radius:12px; padding:8px; height:120px; overflow:auto; font-size:12px; }
+
+    .mini{ display:none; }
+    .mini.visible{ display:block; }
+    .mini .field{ position:relative; height:220px; border-radius:12px; background:#071325; overflow:hidden; }
+    .coin{ position:absolute; width:28px; height:28px; border-radius:50%; background:gold; display:grid; place-items:center; font-weight:900; box-shadow:0 6px 10px #000c; cursor:pointer; }
+
+    .badge{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid #334155; border-radius:999px; font-size:12px; margin-right:6px; margin-bottom:6px; }
+    .badge.done{ border-color:var(--good); }
+
+    .footer{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="card left">
+      <div class="title"><h1>Виртуальный питомец</h1> <span class="small" id="version"></span></div>
+      <div class="stats">
+        <div class="bar"><label>Голод <span id="hungerLabel"></span></label><progress id="hunger" max="100" value="100"></progress></div>
+        <div class="bar"><label>Счастье <span id="happinessLabel"></span></label><progress id="happiness" max="100" value="80"></progress></div>
+        <div class="bar"><label>Энергия <span id="energyLabel"></span></label><progress id="energy" max="100" value="90"></progress></div>
+        <div class="bar"><label>Чистота <span id="cleanLabel"></span></label><progress id="clean" max="100" value="90"></progress></div>
+        <div class="bar"><label>Опыт <span id="xpLabel"></span></label><progress id="xp" max="100" value="0"></progress></div>
+        <div class="state-line">Состояние: <b id="mood">Idle</b> · Уровень: <b id="level">1</b> · Возраст: <b id="age">0д</b></div>
+      </div>
+      <div class="row">
+        <label>Кастомизация:</label>
+        <select id="color" class="select">
+          <option value="#60a5fa">Синий</option>
+          <option value="#34d399">Зеленый</option>
+          <option value="#f472b6">Розовый</option>
+          <option value="#f59e0b">Оранжевый</option>
+          <option value="#a78bfa">Фиолетовый</option>
+        </select>
+        <select id="face" class="select">
+          <option value="^_^">^_^</option>
+          <option value="OwO">OwO</option>
+          <option value=":3">:3</option>
+          <option value="UwU">UwU</option>
+          <option value="•‿•">•‿•</option>
+        </select>
+      </div>
+      <div>
+        <div>Достижения:</div>
+        <div id="achievements"></div>
+      </div>
+      <div class="row">
+        <button id="save">Сохранить</button>
+        <button id="reset">Сбросить</button>
+        <button id="export">Экспорт</button>
+        <input id="import" type="file" accept="application/json" style="display:none"/>
+      </div>
+      <div>
+        <div class="small">Журнал:</div>
+        <div class="log" id="log"></div>
+      </div>
+    </aside>
+
+    <main class="card right">
+      <div class="scene" id="scene">
+        <div class="pet idle" id="pet">
+          <div class="sprite" id="sprite">^_^</div>
+        </div>
+        <div class="bubbles" id="bubbles"></div>
+        <div class="ground"></div>
+      </div>
+
+      <div class="toolbar">
+        <button id="btnFeed">Покормить 🍎</button>
+        <button id="btnPlay" class="primary">Играть 🎮</button>
+        <button id="btnSleep">Спать 😴</button>
+        <button id="btnWash">Помыть 🫧</button>
+        <button id="btnPet">Погладить 🤲</button>
+        <button id="btnHeal">Лечение 💊</button>
+      </div>
+
+      <section class="mini" id="minigame">
+        <div class="title"><h1>Мини‑игра: собери монеты</h1><span class="small">кликните по монете, пока она не пропала</span></div>
+        <div class="field" id="field"></div>
+        <div class="footer"><div class="small">Счет: <b id="score">0</b></div><button id="stopMini">Закончить</button></div>
+      </section>
+
+      <footer class="footer">
+        <div class="small">Подсказка: низкая энергия → питомец засыпает; низкая чистота → шанс заболеть; опыт даётся за уход и игры.</div>
+        <div class="small">© Virtual Pet Starter</div>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+  // ====== МОДЕЛЬ СОСТОЯНИЯ ПИТОМЦА ======
+  const VERSION = 'v1.0.0';
+  const $ = (s) => document.querySelector(s);
+  const logEl = $('#log');
+  $('#version').textContent = VERSION;
+
+  const PetState = Object.freeze({
+    Idle: 'idle', Eating:'eating', Sleeping:'sleeping', Playing:'playing', Sick:'sick', Evolving:'evolving'
+  });
+
+  const defaultSave = () => ({
+    name: 'Pixel', level:1, xp:0, ageMs:0, createdAt: Date.now(),
+    hunger: 100, happiness: 80, energy: 90, clean: 90,
+    color: '#60a5fa', face: '^_^', state: PetState.Idle,
+    achievements: {}, lastTick: Date.now(),
+  });
+
+  let pet = load() || defaultSave();
+  applyCustomization();
+  renderAll();
+  log('Игра загружена');
+
+  // ====== ИГРОВОЙ ЦИКЛ ======
+  let rafId = null;
+  let acc = 0; // накопитель времени
+  const TICK = 1/10; // логика 10 раз в секунду
+
+  function loop(ts){
+    if(!loop.prev) loop.prev = ts;
+    const dt = Math.min(0.05, (ts - loop.prev)/1000); // сек
+    loop.prev = ts;
+
+    acc += dt;
+    while(acc >= TICK){
+      updateNeeds(TICK);
+      acc -= TICK;
+    }
+
+    updateView();
+    rafId = requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // ====== ЛОГИКА ПОТРЕБНОСТЕЙ ======
+  function updateNeeds(dt){
+    // Пассивные изменения (в сек^-1)
+    const hungerDecay = 0.85;   // в час: ~51/час
+    const happyDecay = 0.45;    // ~27/час
+    const energyDecay = 0.35;   // ~21/час
+    const cleanDecay = 0.25;    // ~15/час
+
+    const scale = dt * 3600 / 100; // переводим в проценты/сек из %/час
+
+    if(pet.state !== PetState.Eating) pet.hunger -= hungerDecay * scale;
+    if(pet.state !== PetState.Playing) pet.happiness -= happyDecay * scale;
+    if(pet.state !== PetState.Sleeping) pet.energy -= energyDecay * scale;
+    pet.clean -= cleanDecay * scale;
+
+    // Ограничения 0..100
+    pet.hunger = clamp(pet.hunger, 0, 100);
+    pet.happiness = clamp(pet.happiness, 0, 100);
+    pet.energy = clamp(pet.energy, 0, 100);
+    pet.clean = clamp(pet.clean, 0, 100);
+
+    // Возраст и опыт
+    pet.ageMs += dt * 1000;
+
+    // Шанс заболеть при плохой гигиене/голоде
+    if(pet.state !== PetState.Sick){
+      const risk = ((100 - pet.clean) + (50 - pet.hunger)) / 400; // до ~0.375
+      if(Math.random() < risk * dt){
+        changeState(PetState.Sick, 'Питомец приболел');
+      }
+    }
+
+    // Автосон при низкой энергии
+    if(pet.energy < 15 && pet.state !== PetState.Sleeping){
+      changeState(PetState.Sleeping, 'Слишком устал — засыпает');
+    }
+
+    // Эффекты по состояниям
+    switch(pet.state){
+      case PetState.Sleeping:
+        pet.energy += 18 * scale; // быстро восстанавливаем энергию
+        pet.happiness -= 0.2 * scale; // скучно во сне
+        break;
+      case PetState.Eating:
+        pet.hunger += 24 * scale;
+        pet.happiness += 0.8 * scale;
+        break;
+      case PetState.Playing:
+        pet.happiness += 2.0 * scale;
+        pet.energy -= 1.0 * scale;
+        break;
+      case PetState.Sick:
+        pet.happiness -= 1.2 * scale;
+        pet.energy -= 0.6 * scale;
+        break;
+    }
+
+    // Эволюция по опыту
+    const levelCaps = [0, 20, 50, 85, 100]; // % шкалы xp
+    if(pet.xp >= 100){
+      pet.xp -= 100; pet.level++;
+      changeState(PetState.Evolving, 'Эволюция! Уровень ' + pet.level);
+      setTimeout(()=> changeState(PetState.Idle), 1500);
+      grant('Эволюция I');
+    }
+
+    // Достижения
+    if(pet.hunger > 95 && pet.happiness > 95 && pet.energy > 95) grant('Идеальный уход');
+
+    // Оффлайн‑прогресс — каждые 30 сек авто‑сейв
+    if(Date.now() - pet.lastTick > 30000){ save(); }
+  }
+
+  // ====== ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЯ ======
+  $('#btnFeed').addEventListener('click', ()=>{
+    changeState(PetState.Eating, 'Вкуснятина!');
+    addBubbles(8);
+    pet.xp += 6; capXP();
+  });
+  $('#btnPlay').addEventListener('click', startMinigame);
+  $('#btnSleep').addEventListener('click', ()=>{
+    if(pet.state === PetState.Sleeping){ changeState(PetState.Idle, 'Просыпается'); }
+    else changeState(PetState.Sleeping, 'Ложится спать');
+  });
+  $('#btnWash').addEventListener('click', ()=>{
+    pet.clean = clamp(pet.clean + 18, 0, 100);
+    pet.happiness = clamp(pet.happiness + 2, 0, 100);
+    addBubbles(12);
+    pet.xp += 4; capXP();
+    log('Питомец помыт');
+  });
+  $('#btnPet').addEventListener('click', ()=>{
+    pet.happiness = clamp(pet.happiness + 8, 0, 100);
+    addBubbles(6);
+    log('Питомец доволен лаской');
+  });
+  $('#btnHeal').addEventListener('click', ()=>{
+    if(pet.state === PetState.Sick){
+      pet.state = PetState.Idle; pet.happiness += 6; pet.clean += 4; log('Лекарство помогло');
+      grant('Доктор Айболит');
+    } else { log('Сейчас лечение не требуется'); }
+  });
+
+  $('#color').addEventListener('change', e=>{ pet.color = e.target.value; applyCustomization(); save(); });
+  $('#face').addEventListener('change', e=>{ pet.face = e.target.value; applyCustomization(); save(); });
+
+  $('#save').addEventListener('click', save);
+  $('#reset').addEventListener('click', ()=>{ if(confirm('Сбросить прогресс?')){ pet = defaultSave(); applyCustomization(); renderAll(); save(); log('Игра сброшена'); }});
+
+  $('#export').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(pet,null,2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'pet-save.json'; a.click(); URL.revokeObjectURL(a.href);
+  });
+  $('#import').addEventListener('change', async (e)=>{
+    const file = e.target.files[0]; if(!file) return;
+    const text = await file.text();
+    try{ const data = JSON.parse(text); pet = {...defaultSave(), ...data}; applyCustomization(); renderAll(); save(); log('Сохранение импортировано'); }
+    catch{ alert('Не удалось импортировать файл'); }
+  });
+  // создаем скрытую кнопку, чтобы открыть файл‑диалог
+  $('#export').insertAdjacentHTML('afterend', '<button id="importBtn">Импорт</button>');
+  document.body.addEventListener('click', e=>{ if(e.target.id==='importBtn') $('#import').click(); });
+
+  // ====== МИНИ‑ИГРА ======
+  const mini = $('#minigame'), field = $('#field');
+  let miniTimer = null, score = 0;
+
+  function startMinigame(){
+    if(pet.state === PetState.Sleeping) changeState(PetState.Idle);
+    changeState(PetState.Playing, 'Начинаем мини‑игру');
+    mini.classList.add('visible'); score = 0; $('#score').textContent = score;
+    spawnCoin();
+    miniTimer = setInterval(spawnCoin, 1200);
+    grant('Игроман');
+  }
+  $('#stopMini').addEventListener('click', stopMinigame);
+  function stopMinigame(){
+    mini.classList.remove('visible');
+    clearInterval(miniTimer); miniTimer = null; field.innerHTML='';
+    changeState(PetState.Idle, 'Игра окончена');
+  }
+
+  function spawnCoin(){
+    const coin = document.createElement('div'); coin.className='coin'; coin.textContent='✦';
+    coin.style.left = Math.random()* (field.clientWidth-28) + 'px';
+    coin.style.top = Math.random()* (field.clientHeight-28) + 'px';
+    field.appendChild(coin);
+    const ttl = setTimeout(()=>{ coin.remove(); }, 1200);
+    coin.addEventListener('click', ()=>{
+      clearTimeout(ttl); coin.remove();
+      score++; $('#score').textContent = score;
+      pet.happiness = clamp(pet.happiness + 3, 0, 100);
+      pet.xp += 5; capXP();
+    }, {once:true});
+  }
+
+  // ====== UI & УТИЛИТЫ ======
+  function updateView(){
+    $('#hunger').value = pet.hunger; $('#hungerLabel').textContent = pet.hunger.toFixed(0)+'%';
+    $('#happiness').value = pet.happiness; $('#happinessLabel').textContent = pet.happiness.toFixed(0)+'%';
+    $('#energy').value = pet.energy; $('#energyLabel').textContent = pet.energy.toFixed(0)+'%';
+    $('#clean').value = pet.clean; $('#cleanLabel').textContent = pet.clean.toFixed(0)+'%';
+    $('#xp').value = pet.xp; $('#xpLabel').textContent = pet.xp.toFixed(0)+'%';
+    $('#level').textContent = pet.level;
+    $('#age').textContent = humanAge(pet.ageMs);
+
+    const petEl = $('#pet'); petEl.className = 'pet ' + pet.state;
+    const sprite = $('#sprite'); sprite.textContent = pet.face; sprite.style.background = pet.color;
+
+    const moodText = ({
+      [PetState.Idle]:'Спокоен', [PetState.Eating]:'Ест', [PetState.Sleeping]:'Спит', [PetState.Playing]:'Играет', [PetState.Sick]:'Болеет', [PetState.Evolving]:'Эволюция'
+    })[pet.state];
+    $('#mood').textContent = moodText;
+
+    renderAchievements();
+  }
+
+  function renderAll(){ updateView(); }
+
+  function changeState(s, msg){ pet.state = s; if(msg) log(msg); }
+  function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+  function capXP(){ if(pet.xp>100) pet.xp=100; }
+
+  function addBubbles(n){
+    const wrap = $('#bubbles');
+    for(let i=0;i<n;i++){
+      const b=document.createElement('div'); b.className='bubble';
+      b.style.left = 50 + (Math.random()*80-40) + '%'; b.style.bottom='20px';
+      wrap.appendChild(b); setTimeout(()=>b.remove(), 3000);
+    }
+  }
+
+  function humanAge(ms){
+    const d = Math.floor(ms/86400000); ms%=86400000;
+    const h = Math.floor(ms/3600000); ms%=3600000;
+    const m = Math.floor(ms/60000);
+    return (d>0? d+'д ' : '') + (h>0? h+'ч ' : '') + m + 'м';
+  }
+
+  function log(t){
+    const line = document.createElement('div'); line.textContent = new Date().toLocaleTimeString()+': '+t;
+    logEl.prepend(line); // последние сверху
+  }
+
+  function applyCustomization(){
+    $('#sprite').style.background = pet.color;
+    $('#sprite').textContent = pet.face;
+    $('#color').value = pet.color; $('#face').value = pet.face;
+  }
+
+  // ====== СЕЙВ/ЛОАД (localStorage + оффлайн прогресс) ======
+  function save(){
+    pet.lastTick = Date.now();
+    localStorage.setItem('virtual-pet-save', JSON.stringify(pet));
+    log('Сохранено');
+  }
+  function load(){
+    const raw = localStorage.getItem('virtual-pet-save');
+    if(!raw) return null; 
+    try{
+      const data = JSON.parse(raw);
+      // Оффлайн‑прогресс: симулируем прошедшее время грубо
+      const gap = (Date.now() - (data.lastTick||Date.now()))/1000; // сек
+      if(gap>5){
+        data.hunger = clamp(data.hunger - gap*0.85*3600/100, 0, 100);
+        data.happiness = clamp(data.happiness - gap*0.45*3600/100, 0, 100);
+        data.energy = clamp(data.energy - gap*0.35*3600/100, 0, 100);
+        data.clean = clamp(data.clean - gap*0.25*3600/100, 0, 100);
+        data.ageMs += gap*1000;
+      }
+      return data;
+    }catch{ return null }
+  }
+
+  // ====== ДОСТИЖЕНИЯ ======
+  const allAchievements = [
+    'Первый день', 'Игроман', 'Доктор Айболит', 'Идеальный уход', 'Эволюция I'
+  ];
+  function grant(name){
+    if(!pet.achievements[name]){
+      pet.achievements[name] = { at: Date.now() };
+      renderAchievements();
+      log('Достижение: '+name);
+    }
+  }
+  function renderAchievements(){
+    const box = $('#achievements'); box.innerHTML='';
+    allAchievements.forEach(a=>{
+      const el = document.createElement('span'); el.className='badge'+(pet.achievements[a]? ' done':'' ); el.textContent = a; box.appendChild(el);
+    });
+    // Первое посещение спустя 24ч
+    if(pet.ageMs> 24*3600*1000) grant('Первый день');
+  }
+
+  // ====== ПРОСТЕЙШАЯ "МУЛЬТИПЛЕЕР" СТУБ ======
+  // В реальном проекте нужен сервер. Здесь — обмен кодом питомца.
+  // Вы можете поделиться экспортированным JSON. Другой игрок может импортировать и 
+  // посетить вашего питомца, например, передать его на день и вернуть (совместная забота).
+
+  </script>
+</body>
+</html>
