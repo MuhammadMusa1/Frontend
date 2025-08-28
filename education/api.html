@@ -1,0 +1,952 @@
+```html
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Инструменты для тестирования API</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: #333;
+      line-height: 1.6;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .presentation {
+      width: 90%;
+      max-width: 1000px;
+      height: 80vh;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slides-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide.next {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .analogy {
+      background: #f0f7ff;
+      border-left: 4px solid #2575fc;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: #2c3e50;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      color: #856404;
+      padding: 2px 6px;
+      border-radius: 4px;
+      cursor: help;
+      position: relative;
+      font-weight: 500;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: #333;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      max-width: 250px;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border: 5px solid transparent;
+      border-top-color: #333;
+    }
+
+    .highlight:hover .tooltip {
+      opacity: 1;
+    }
+
+    .code-block {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      overflow-x: auto;
+    }
+
+    .code-line {
+      display: flex;
+      margin: 4px 0;
+    }
+
+    .line-number {
+      color: #999;
+      width: 30px;
+      text-align: right;
+      margin-right: 10px;
+    }
+
+    .copy-btn {
+      background: #2575fc;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      float: right;
+      margin-top: -5px;
+    }
+
+    .copy-btn:hover {
+      background: #1a5edc;
+    }
+
+    .example {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .example-box {
+      flex: 1;
+      min-width: 250px;
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+    }
+
+    .example-title {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .demo-area {
+      background: #f0f7ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      border: 1px dashed #2575fc;
+    }
+
+    .btn {
+      background: #2575fc;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: #1a5edc;
+      transform: translateY(-2px);
+    }
+
+    .btn-prev {
+      background: #6c757d;
+    }
+
+    .btn-prev:hover {
+      background: #5a6268;
+    }
+
+    .nav-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #2575fc;
+      transform: scale(1.2);
+    }
+
+    .visual {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .api-visual {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .arrow {
+      font-size: 2rem;
+      margin: 10px 0;
+    }
+
+    .postman-ui {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+    }
+
+    .swagger-ui {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-size: 0.95rem;
+    }
+
+    .endpoint {
+      padding: 8px;
+      margin: 5px 0;
+      background: #e9ecef;
+      border-radius: 4px;
+    }
+
+    .method {
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 8px;
+    }
+
+    .method.GET {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .method.POST {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    .conclusion {
+      text-align: center;
+      font-size: 1.3rem;
+      color: #2c3e50;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .presentation {
+        width: 95%;
+        height: 90vh;
+      }
+      .slide-title {
+        font-size: 1.8rem;
+      }
+      .text {
+        font-size: 1rem;
+      }
+      .code-block {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation">
+    <div class="slides-container" id="slidesContainer">
+      <!-- Слайд 1: Введение -->
+      <div class="slide active">
+        <h1 class="slide-title">Инструменты для тестирования API</h1>
+        <div class="slide-content">
+          <p class="text">Простое руководство для новичков</p>
+          <div class="analogy">
+            Представьте, что вы в ресторане. API — это как меню, которое позволяет вам заказать еду (данные) от кухни (сервера).
+          </div>
+          <p class="text">Что произойдет, если меню не работает?</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 2: Что такое API? -->
+      <div class="slide">
+        <h1 class="slide-title">Что такое API?</h1>
+        <div class="slide-content">
+          <div class="visual">
+            <div class="api-visual">📱 → 🔄 → 🖥️</div>
+            <p class="text">Ваш телефон запрашивает данные у сервера</p>
+          </div>
+          <p class="text">API (Application Programming Interface) — это <span class="highlight">набор правил</span> 
+            <div class="tooltip">API — это как менеджер между приложениями. Он помогает им общаться.</div>
+          </span>, по которым приложения общаются друг с другом.</p>
+          <div class="analogy">
+            Как официант в ресторане: вы заказываете (запрос), он передает заказ на кухню (сервер) и приносит блюдо (ответ).
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 3: Зачем тестировать API? -->
+      <div class="slide">
+        <h1 class="slide-title">Зачем тестировать API?</h1>
+        <div class="slide-content">
+          <p class="text">Без тестирования:</p>
+          <ul class="text" style="margin-left: 20px; margin-top: 10px;">
+            <li>Приложение может "упасть"</li>
+            <li>Данные могут быть неправильными</li>
+            <li>Пользователи будут недовольны</li>
+          </ul>
+          <div class="analogy">
+            Представьте, что вы заказали пиццу, а вам принесли суп. Такие ошибки можно найти с помощью тестирования API.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 4: Основные типы запросов -->
+      <div class="slide">
+        <h1 class="slide-title">Основные типы запросов</h1>
+        <div class="slide-content">
+          <div class="example">
+            <div class="example-box">
+              <div class="example-title">GET</div>
+              <p class="text">Запросить данные (как спросить меню)</p>
+              <div class="visual">🔍 → 📄</div>
+            </div>
+            <div class="example-box">
+              <div class="example-title">POST</div>
+              <p class="text">Отправить данные (как сделать заказ)</p>
+              <div class="visual">📤 → 🍕</div>
+            </div>
+          </div>
+          <p class="text">Это как глаголы в языке: "получить" и "отправить".</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 5: Что такое Postman? -->
+      <div class="slide">
+        <h1 class="slide-title">Postman: ваш виртуальный официант</h1>
+        <div class="slide-content">
+          <p class="text">Postman — это <span class="highlight">инструмент</span>
+            <div class="tooltip">Программа, которая помогает тестировать API, как тестер заказов в ресторане.</div>
+          </span>, который позволяет легко отправлять запросы к API и смотреть ответы.</p>
+          <div class="analogy">
+            Представьте, что у вас есть пульт, с помощью которого вы можете заказывать любые блюда и сразу видеть результат.
+          </div>
+          <div class="postman-ui">
+            🔍 Метод: GET<br>
+            🌐 URL: https://api.example.com/users<br>
+            ▶️ [Отправить]
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 6: Демонстрация Postman -->
+      <div class="slide">
+        <h1 class="slide-title">Как использовать Postman</h1>
+        <div class="slide-content">
+          <p class="text">Давайте отправим простой запрос:</p>
+          <ol class="text" style="margin-left: 20px; margin-top: 10px;">
+            <li>Выберите метод <strong>GET</strong></li>
+            <li>Введите адрес: <strong>https://jsonplaceholder.typicode.com/posts/1</strong></li>
+            <li>Нажмите <strong>Отправить</strong></li>
+          </ol>
+          <button class="btn" id="demoPostman">Попробовать демо</button>
+          <div id="postmanDemo" style="display: none;" class="demo-area">
+            <p><strong>Ответ:</strong></p>
+            <pre style="margin: 10px 0;">{
+  "userId": 1,
+  "id": 1,
+  "title": "Тестовый пост",
+  "body": "Это тело поста"
+}</pre>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 7: Коллекции в Postman -->
+      <div class="slide">
+        <h1 class="slide-title">Коллекции в Postman</h1>
+        <div class="slide-content">
+          <p class="text">Postman позволяет сохранять запросы в <span class="highlight">коллекции</span>
+            <div class="tooltip">Как папки с вашими любимыми заказами в ресторане.</div>
+          </span>.</p>
+          <div class="analogy">
+            Представьте, что у вас есть книга с вашими любимыми рецептами. Вы можете быстро найти и повторить любой из них.
+          </div>
+          <div class="example">
+            <div class="example-box">
+              <div class="example-title">Коллекция "Пользователи"</div>
+              <p class="text">- Получить всех пользователей</p>
+              <p class="text">- Создать нового пользователя</p>
+              <p class="text">- Обновить пользователя</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 8: Что такое Swagger? -->
+      <div class="slide">
+        <h1 class="slide-title">Swagger: меню для разработчиков</h1>
+        <div class="slide-content">
+          <p class="text">Swagger — это <span class="highlight">документация</span>
+            <div class="tooltip">Как подробное меню с описанием всех блюд и ингредиентов.</div>
+          </span> для API, которая показывает, какие запросы можно делать.</p>
+          <div class="analogy">
+            Это как меню в ресторане: вы видите все доступные блюда (эндпоинты), их описание и ингредиенты (параметры).
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 9: Визуализация Swagger -->
+      <div class="slide">
+        <h1 class="slide-title">Как читать Swagger</h1>
+        <div class="slide-content">
+          <div class="swagger-ui">
+            <div class="endpoint">
+              <span class="method GET">GET</span> /users
+              <p>Получить список всех пользователей</p>
+              <p><small>Параметры: limit (число), page (число)</small></p>
+            </div>
+            <div class="endpoint">
+              <span class="method POST">POST</span> /users
+              <p>Создать нового пользователя</p>
+              <p><small>Тело запроса: { "name": "string", "email": "string" }</small></p>
+            </div>
+          </div>
+          <p class="text">Вы можете сразу попробовать запросы прямо из документации!</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 10: Пример кода -->
+      <div class="slide">
+        <h1 class="slide-title">Пример запроса</h1>
+        <div class="slide-content">
+          <p class="text">Вот как выглядит простой GET-запрос:</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <div class="code-line">
+              <span class="line-number">1</span>
+              <span>GET /api/users/1 HTTP/1.1</span>
+            </div>
+            <div class="code-line">
+              <span class="line-number">2</span>
+              <span>Host: example.com</span>
+            </div>
+            <div class="code-line">
+              <span class="line-number">3</span>
+              <span>Accept: application/json</span>
+            </div>
+          </div>
+          <p class="text">Это как заказать конкретного пользователя по его номеру.</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 11: Postman vs Swagger -->
+      <div class="slide">
+        <h1 class="slide-title">Postman vs Swagger</h1>
+        <div class="slide-content">
+          <div class="example">
+            <div class="example-box">
+              <div class="example-title">Postman</div>
+              <p class="text">🔹 Для отправки запросов</p>
+              <p class="text">🔹 Для тестирования</p>
+              <p class="text">🔹 Для автоматизации</p>
+            </div>
+            <div class="example-box">
+              <div class="example-title">Swagger</div>
+              <p class="text">🔹 Для документации</p>
+              <p class="text">🔹 Для понимания API</p>
+              <p class="text">🔹 Для разработки</p>
+            </div>
+          </div>
+          <p class="text">Они дополняют друг друга, как менеджер и меню в ресторане.</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 12: Преимущества тестирования -->
+      <div class="slide">
+        <h1 class="slide-title">Преимущества тестирования API</h1>
+        <div class="slide-content">
+          <ul class="text" style="margin-left: 20px;">
+            <li>Раннее обнаружение ошибок</li>
+            <li>Гарантия качества продукта</li>
+            <li>Экономия времени и денег</li>
+            <li>Уверенность в работе приложения</li>
+          </ul>
+          <div class="analogy">
+            Это как пробовать блюдо перед подачей клиенту. Лучше найти ошибку сейчас, чем потом.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 13: Где начать? -->
+      <div class="slide">
+        <h1 class="slide-title">Где начать?</h1>
+        <div class="slide-content">
+          <p class="text">1. Установите <strong>Postman</strong> (бесплатно)</p>
+          <p class="text">2. Найдите публичные API (например, jsonplaceholder.typicode.com)</p>
+          <p class="text">3. Попробуйте простые GET-запросы</p>
+          <p class="text">4. Изучите документацию Swagger</p>
+          <div class="analogy">
+            Начните с простого, как с первого блюда в меню. Постепенно переходите к более сложным запросам.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 14: Заключение -->
+      <div class="slide">
+        <h1 class="slide-title">Заключение</h1>
+        <div class="slide-content">
+          <div class="conclusion">
+            Тестирование API — это просто и доступно каждому!
+          </div>
+          <p class="text" style="text-align: center; margin-top: 20px;">
+            Не бойтесь экспериментировать. Каждый разработчик когда-то начинал с простого.
+          </p>
+          <div class="analogy" style="text-align: center; margin-top: 20px;">
+            Помните: даже шеф-повар начинал с простых блюд.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 15: Спасибо -->
+      <div class="slide">
+        <h1 class="slide-title">Спасибо за внимание!</h1>
+        <div class="slide-content">
+          <p class="text" style="text-align: center; font-size: 1.4rem;">
+            Теперь вы знаете основы тестирования API
+          </p>
+          <div class="visual" style="margin-top: 30px;">
+            <div class="api-visual">🚀 → ✅ → 🎉</div>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-top: 1px solid #eee;">
+      <button class="btn btn-prev" id="prevBtn">← Назад</button>
+      <button class="btn" id="nextBtn">Вперед →</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const slidesContainer = document.getElementById('slidesContainer');
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dots = document.querySelectorAll('.dot');
+      
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function updateSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove('active', 'next');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+          } else if (index < currentSlide) {
+            slide.classList.add('next');
+          }
+        });
+
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentSlide);
+        });
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentSlide = index;
+          updateSlides();
+        });
+      });
+
+      // Демо Postman
+      document.getElementById('demoPostman').addEventListener('click', function() {
+        const demo = document.getElementById('postmanDemo');
+        demo.style.display = demo.style.display === 'none' ? 'block' : 'none';
+        this.textContent = demo.style.display === 'block' ? 'Скрыть демо' : 'Попробовать демо';
+      });
+
+      // Копирование кода
+      window.copyCode = function(button) {
+        const codeLines = button.parentElement.querySelectorAll('.code-line');
+        let code = '';
+        codeLines.forEach(line => {
+          code += line.innerText.trim() + '\n';
+        });
+        
+        navigator.clipboard.writeText(code.trim()).then(() => {
+          const originalText = button.textContent;
+          button.textContent = 'Скопировано!';
+          setTimeout(() => {
+            button.textContent = originalText;
+          }, 2000);
+        });
+      };
+
+      // Управление с клавиатуры
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+```

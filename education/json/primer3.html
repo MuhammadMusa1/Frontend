@@ -1,0 +1,35 @@
+<!-- Сохранение списка -->
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сохранение списка</title>
+ </head>
+ <body>
+    <h1>Сохрани свои любимые фрукты</h1>
+    <input type="text" id="fruitInput" placeholder="Введите название фрукта">
+    <button onclick="addFruit()">Добавить фрукт</button>
+    <button onclick="saveFruits()">Сохранить список</button>
+    <p id="message"></p>
+    <script>
+        let myFruits = [];
+        function addFruit(){
+            const fruit = document.getElementById('fruitInput').value;
+            myFruits.push(fruit);
+            document.getElementById('fruitInput').value = '';
+            document.getElementById('message').textContent = `Добавлено: ${myFruits.join(', ')}`;
+        }
+        function saveFruits(){
+            // 1. Превращаем массив в JSON-строку
+            const jsonFruits = JSON.stringify(myFruits);
+            // 2. Сохраняем строку в localStorage
+            localStorage.setItem('favoriteFruits', jsonFruits);
+            // 3. Выводим сообщение об успехе
+            document.getElementById('message').textContent = 'Список сохранен!';
+        }
+
+    </script>
+    
+ </body>
+ </html>

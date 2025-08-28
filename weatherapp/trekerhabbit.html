@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Трекер привычек</title>
+    <link rel="stylesheet" href="trekerhabbit.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Трекер привычек</h1>
+            <div class="date-display" id="currentDate"></div>
+        </header>
+
+        <div class="add-habit-section">
+            <input type="text" id="newHabitInput" placeholder="Введите новую привычку...">
+            <button onclick="addNewHabit()">+ Добавить</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Сегодня</h3>
+                <span id="todayCompleted">0</span>/<span id="todayTotal">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Неделя</h3>
+                <span id="weekCompleted">0</span>/<span id="weekTotal">0</span>
+            </div>
+        </div>
+
+        <div class="habits-list" id="habitsList">
+            <!-- Привычки будут добавляться с помощью JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button onclick="clearAllData()" class="clear-btn">🗑️ Очистить все</button>
+        </div>
+    </div>
+
+    <script src="trekerhabbit.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор мемов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .upload-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .upload-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #45a049;
+        }
+
+        .text-inputs {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .generate-btn:hover {
+            background: #5a67d8;
+        }
+
+        .meme-container {
+            position: relative;
+            margin: 0 auto;
+            max-width: 500px;
+            border: 5px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        #memeImage {
+            width: 100%;
+            display: block;
+        }
+
+        .meme-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px black;
+            padding: 10px;
+            word-wrap: break-word;
+        }
+
+        .top-text {
+            top: 10px;
+        }
+
+        .bottom-text {
+            bottom: 10px;
+        }
+
+        .download-btn {
+            width: 100%;
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background: #ee5a52;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Генератор Мемов</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="imageUpload" accept="image/*" class="hidden">
+            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
+                📁 Выбрать изображение
+            </button>
+        </div>
+
+        <div class="text-inputs">
+            <input type="text" id="topText" placeholder="Введите верхний текст...">
+            <input type="text" id="bottomText" placeholder="Введите нижний текст...">
+        </div>
+
+        <button class="generate-btn" onclick="generateMeme()">
+            🎨 Сгенерировать мем
+        </button>
+
+        <div class="meme-container">
+            <img id="memeImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300' viewBox='0 0 500 300'%3E%3Crect width='500' height='300' fill='%23f0f0f0'/%3E%3Ctext x='250' y='150' font-family='Arial' font-size='20' fill='%23ccc' text-anchor='middle'%3EВыберите изображение%3C/text%3E%3C/svg%3E" alt="Мем">
+            <div id="topTextDisplay" class="meme-text top-text"></div>
+            <div id="bottomTextDisplay" class="meme-text bottom-text"></div>
+        </div>
+
+        <button class="download-btn" onclick="downloadMeme()">
+            💾 Скачать мем
+        </button>
+    </div>
+
+    <script>
+        let selectedImage = null;
+
+        // Загрузка изображения
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    selectedImage = event.target.result;
+                    document.getElementById('memeImage').src = selectedImage;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Генерация мема
+        function generateMeme() {
+            const topText = document.getElementById('topText').value;
+            const bottomText = document.getElementById('bottomText').value;
+            
+            document.getElementById('topTextDisplay').textContent = topText;
+            document.getElementById('bottomTextDisplay').textContent = bottomText;
+        }
+
+        // Скачивание мема (используем Canvas)
+        function downloadMeme() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = document.getElementById('memeImage');
+            
+            // Ждем загрузки изображения
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                
+                // Рисуем изображение
+                ctx.drawImage(img, 0, 0);
+                
+                // Настройки текста
+                ctx.fillStyle = 'white';
+                ctx.strokeStyle = 'black';
+                ctx.lineWidth = 3;
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 40px Impact';
+                
+                // Верхний текст
+                const topText = document.getElementById('topText').value;
+                if (topText) {
+                    ctx.strokeText(topText, canvas.width / 2, 50);
+                    ctx.fillText(topText, canvas.width / 2, 50);
+                }
+                
+                // Нижний текст
+                const bottomText = document.getElementById('bottomText').value;
+                if (bottomText) {
+                    ctx.strokeText(bottomText, canvas.width / 2, canvas.height - 20);
+                    ctx.fillText(bottomText, canvas.width / 2, canvas.height - 20);
+                }
+                
+                // Создаем ссылку для скачивания
+                const link = document.createElement('a');
+                link.download = 'my-meme.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+            
+            // Если изображение уже загружено
+            if (img.complete) {
+                img.onload();
+            }
+        }
+
+        // Быстрые примеры мемов
+        const memeExamples = [
+            { image: 'https://via.placeholder.com/500x300/ff6b6b/white?text=Драконий+мем', top: 'Когда твой код', bottom: 'наконец-то работает' },
+            { image: 'https://via.placeholder.com/500x300/4ecdc4/white?text=Котик+мем', top: 'Понедельник', bottom: 'будь проклят' }
+        ];
+
+        // Функция для быстрой загрузки примера
+        window.loadExample = function(index) {
+            const example = memeExamples[index];
+            selectedImage = example.image;
+            document.getElementById('memeImage').src = example.image;
+            document.getElementById('topText').value = example.top;
+            document.getElementById('bottomText').value = example.bottom;
+            generateMeme();
+        };
+    </script>
+</body>
+</html>

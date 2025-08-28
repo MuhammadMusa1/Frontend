@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Инструментарий при тестировании API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            color: #333;
+            overflow: hidden;
+        }
+        .presentation {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .slide.prev {
+            transform: translateX(-100%);
+        }
+        h1, h2 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        p, ul {
+            max-width: 800px;
+            line-height: 1.6;
+            text-align: center;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            text-align: left;
+        }
+        pre {
+            background-color: #f1f3f5;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        code {
+            font-family: 'Courier New', monospace;
+        }
+        button {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0d5bd9;
+        }
+        #response, #swaggerResponse {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f4fd;
+            border: 1px solid #1a73e8;
+            border-radius: 8px;
+            max-width: 800px;
+            text-align: left;
+        }
+        .navigation {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        .progress {
+            margin: 0 20px;
+            font-size: 16px;
+            color: #666;
+        }
+        .icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: #1a73e8;
+        }
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            p, ul {
+                font-size: 14px;
+            }
+            button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <div id="slide1" class="slide active">
+            <div class="icon">📊</div>
+            <h1>Инструментарий при тестировании API</h1>
+            <p>Добро пожаловать! Эта презентация простыми словами объяснит, что такое API, зачем его тестировать и как использовать инструменты Postman и Swagger.</p>
+            <p>Мы добавили интерактивные элементы и примеры для лучшей наглядности, сохраняя доступность для всех.</p>
+        </div>
+
+        <div id="slide2" class="slide">
+            <div class="icon">🔌</div>
+            <h2>Что такое API?</h2>
+            <p>API — это интерфейс, как "меню" в ресторане, позволяющий программам обмениваться данными и услугами.</p>
+            <p>Пример: Приложение погоды использует API для получения данных с сервера.</p>
+            <p>API работает на основе запросов и ответов, подобно разговору между клиентом и сервером.</p>
+        </div>
+
+        <div id="slide3" class="slide">
+            <div class="icon">🛡️</div>
+            <h2>Зачем тестировать API?</h2>
+            <p>Тестирование обеспечивает надежность:</p>
+            <ul>
+                <li>Правильные ответы на запросы.</li>
+                <li>Обработку ошибок.</li>
+                <li>Быструю и безопасную работу.</li>
+            </ul>
+            <p>Это предотвращает сбои в приложениях и повышает удовлетворенность пользователей.</p>
+        </div>
+
+        <div id="slide4" class="slide">
+            <div class="icon">📬</div>
+            <h2>Введение в Postman</h2>
+            <p>Postman — интуитивный инструмент для отправки запросов к API, как специализированный браузер.</p>
+            <p>Доступен бесплатно на postman.com. Поддерживает GET, POST и другие методы.</p>
+            <p>Идеален для тестирования без кодирования.</p>
+        </div>
+
+        <div id="slide5" class="slide">
+            <div class="icon">🚀</div>
+            <h2>Демонстрация Postman</h2>
+            <p>Выберите метод, URL и отправьте. Вот интерактивный пример:</p>
+            <button onclick="sendRequest()">Отправить GET-запрос</button>
+            <div id="response"></div>
+            <p>Пример кода (JavaScript):</p>
+            <pre><code>fetch('https://jsonplaceholder.typicode.com/posts/1')
+  .then(response => response.json())
+  .then(data => console.log(data));</code></pre>
+        </div>
+
+        <div id="slide6" class="slide">
+            <div class="icon">📖</div>
+            <h2>Введение в Swagger</h2>
+            <p>Swagger — инструмент для документации API с интерактивными тестами.</p>
+            <p>Создает удобную страницу для просмотра и пробных запросов.</p>
+            <p>Пример: petstore.swagger.io.</p>
+        </div>
+
+        <div id="slide7" class="slide">
+            <div class="icon">🧪</div>
+            <h2>Демонстрация Swagger</h2>
+            <p>Выберите запрос, введите параметры и выполните:</p>
+            <button onclick="simulateSwagger()">Выполнить запрос</button>
+            <div id="swaggerResponse"></div>
+            <p>Пример описания (YAML):</p>
+            <pre><code>/users:
+  get:
+    description: Получить список пользователей
+    responses:
+      200:
+        description: Успех</code></pre>
+        </div>
+
+        <div id="slide8" class="slide">
+            <div class="icon">🏁</div>
+            <h2>Заключение</h2>
+            <p>Мы разобрали API, тестирование и инструменты Postman/Swagger.</p>
+            <p>Эти инструменты упрощают работу. Экспериментируйте!</p>
+            <p>Спасибо!</p>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <button onclick="prevSlide()">← Предыдущий</button>
+        <span class="progress" id="progress">1 / 8</span>
+        <button onclick="nextSlide()">Следующий →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+        const progress = document.getElementById('progress');
+
+        function updateProgress() {
+            progress.textContent = `${currentSlide} / ${totalSlides}`;
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            slides.forEach(slide => slide.classList.remove('active', 'prev'));
+            slides[n-1].classList.add('active');
+            if (n > 1) {
+                slides[n-2].classList.add('prev');
+            }
+            updateProgress();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        function sendRequest() {
+            fetch('https://jsonplaceholder.typicode.com/posts/1')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerHTML = `<strong>Ответ:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                })
+                .catch(error => {
+                    document.getElementById('response').innerHTML = 'Ошибка: ' + error;
+                });
+        }
+
+        function simulateSwagger() {
+            fetch('https://jsonplaceholder.typicode.com/users/1')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('swaggerResponse').innerHTML = `<strong>Результат:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>`;
+                })
+                .catch(error => {
+                    document.getElementById('swaggerResponse').innerHTML = 'Ошибка: ' + error;
+                });
+        }
+
+        updateProgress();
+    </script>
+</body>
+</html>

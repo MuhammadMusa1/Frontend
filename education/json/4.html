@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пример 4: Загрузка списка</title>
+</head>
+<body>
+
+    <h1>Ваши любимые фрукты:</h1>
+    <ul id="fruitList"></ul>
+
+    <script>
+        // 1. Получаем JSON-строку
+        const jsonFruits = localStorage.getItem('favoriteFruits');
+        
+        if (jsonFruits) {
+            // 2. Превращаем JSON-строку обратно в массив
+            const myFruits = JSON.parse(jsonFruits);
+
+            // 3. Создаем список на странице
+            const listElement = document.getElementById('fruitList');
+            myFruits.forEach(fruit => {
+                const li = document.createElement('li');
+                li.textContent = fruit;
+                listElement.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
