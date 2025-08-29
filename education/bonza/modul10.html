@@ -1,0 +1,1174 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Роль аналитика в интеграционном проекте</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: #fff;
+      line-height: 1.6;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .presentation {
+      width: 90%;
+      max-width: 1000px;
+      height: 80vh;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slides-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide.next {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      color: #1e3c72;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .slide-subtitle {
+      font-size: 1.4rem;
+      color: #2a5298;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #333;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .text ul, .text ol {
+      margin-left: 20px;
+      margin-top: 10px;
+    }
+
+    .bank-systems {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .system {
+      background: #e3f2fd;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      color: #1565c0;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .level-box {
+      background: #f8f9fa;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #2a5298;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      color: #2e7d32;
+      font-weight: 500;
+    }
+
+    .benefit::before {
+      content: '✅';
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+
+    .method {
+      background: #f0f7ff;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #bbdefb;
+    }
+
+    .analyst-role {
+      background: #e8f5e8;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #4caf50;
+    }
+
+    .skill {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .skill-icon {
+      font-size: 1.5rem;
+      margin-right: 12px;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .question {
+      background: #fff3e0;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #fb8c00;
+    }
+
+    .block {
+      background: #f3e5f5;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #8e24aa;
+    }
+
+    .example {
+      background: #e8f8f5;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px dashed #009688;
+    }
+
+    .jira-task {
+      background: #fff8e1;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 8px;
+      border-left: 4px solid #ff8f00;
+    }
+
+    .final-message {
+      text-align: center;
+      font-size: 1.4rem;
+      color: #1e3c72;
+      font-weight: 500;
+      line-height: 1.8;
+    }
+
+    .thank-you {
+      text-align: center;
+      font-size: 2rem;
+      color: #1e3c72;
+      margin-top: 20px;
+    }
+
+    .nav-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #2a5298;
+      transform: scale(1.2);
+    }
+
+    .btn {
+      background: #2a5298;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: #1e3c72;
+      transform: translateY(-2px);
+    }
+
+    .btn-prev {
+      background: #6c757d;
+    }
+
+    .btn-prev:hover {
+      background: #5a6268;
+    }
+
+    @media (max-width: 768px) {
+      .presentation {
+        width: 95%;
+        height: 90vh;
+      }
+      .slide-title {
+        font-size: 1.8rem;
+      }
+      .slide-subtitle {
+        font-size: 1.2rem;
+      }
+      .text {
+        font-size: 1rem;
+      }
+      .bank-systems {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation">
+    <div class="slides-container" id="slidesContainer">
+      <!-- Слайд 1: Заглавный -->
+      <div class="slide active">
+        <h1 class="slide-title">Роль аналитика в интеграционном проекте</h1>
+        <p class="slide-subtitle">На примере банковских систем (ЦФТ, CRM, ДБО, процессинг)</p>
+        <div class="bank-systems" style="margin-top: 40px;">
+          <div class="system">ЦФТ</div>
+          <div class="system">CRM</div>
+          <div class="system">ДБО</div>
+          <div class="system">Процессинг</div>
+          <div class="system">BI-отчеты</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 2: Что такое интеграция -->
+      <div class="slide">
+        <h1 class="slide-title">Что такое интеграция</h1>
+        <div class="slide-content">
+          <p class="text">Интеграция = объединение систем для обмена данными.</p>
+          <div class="bank-systems">
+            <div class="system">ЦФТ</div>
+            <div class="system">CRM</div>
+            <div class="system">ДБО</div>
+            <div class="system">Процессинг</div>
+            <div class="system">BI-отчеты</div>
+          </div>
+          <p class="text"><strong>Цель:</strong> клиент видит актуальные данные везде — в офисе, интернет-банке, мобильном приложении.</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 3: Уровни интеграции -->
+      <div class="slide">
+        <h1 class="slide-title">Уровни интеграции</h1>
+        <div class="slide-content">
+          <div class="level-box">
+            <strong>Бизнес-процессов</strong> → оформление кредита (CRM и ЦФТ)
+          </div>
+          <div class="level-box">
+            <strong>Сервисов</strong> → API проверки баланса карты (CRM вызывает ЦФТ)
+          </div>
+          <div class="level-box">
+            <strong>Данных</strong> → отчеты QlikView используют данные из ЦФТ и ДБО
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 4: Зачем нужна интеграция банку -->
+      <div class="slide">
+        <h1 class="slide-title">Зачем нужна интеграция банку</h1>
+        <div class="slide-content">
+          <div class="benefit">Быстрая обработка заявок (кредит за 5 минут)</div>
+          <div class="benefit">Снижение ошибок (данные клиента синхронизированы)</div>
+          <div class="benefit">Единое окно для клиента (одна операция отражается везде)</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 5: Способы интеграции -->
+      <div class="slide">
+        <h1 class="slide-title">Способы интеграции</h1>
+        <div class="slide-content">
+          <div class="method">
+            <strong>Web-services (API)</strong> – проверка баланса карты
+          </div>
+          <div class="method">
+            <strong>Message broker</strong> – гарантированная доставка транзакций с банкоматов
+          </div>
+          <div class="method">
+            <strong>ESB (шина)</strong> – подключение CRM ↔ ЦФТ ↔ BI
+          </div>
+          <div class="method">
+            <strong>Data Layer</strong> – выгрузка из ЦФТ в отчётность (ETL → QlikView)
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 6: Сравнение способов -->
+      <div class="slide">
+        <h1 class="slide-title">Сравнение способов</h1>
+        <div class="slide-content">
+          <div class="method">
+            <strong>Web-сервисы</strong> → быстрый доступ к данным
+          </div>
+          <div class="method">
+            <strong>Message broker</strong> → надёжность при сбоях
+          </div>
+          <div class="method">
+            <strong>ESB</strong> → гибкость для сложных проектов
+          </div>
+          <div class="method">
+            <strong>Data Layer</strong> → отчётность и аналитика
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 7: Роль аналитика -->
+      <div class="slide">
+        <h1 class="slide-title">Роль аналитика в интеграционном проекте</h1>
+        <div class="slide-content">
+          <div class="analyst-role">Выявляет системы, которые должны "общаться"</div>
+          <div class="analyst-role">Определяет мастер-систему (например, ЦФТ для клиентов)</div>
+          <div class="analyst-role">Описывает процессы обмена</div>
+          <div class="analyst-role">Формирует ТЗ для разработчиков и тестировщиков</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 8: Навыки аналитика -->
+      <div class="slide">
+        <h1 class="slide-title">Навыки аналитика</h1>
+        <div class="slide-content">
+          <div class="skill">
+            <span class="skill-icon">🧠</span>
+            <span>Понимание архитектуры (что где хранится)</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">📝</span>
+            <span>Умение писать ТЗ на интеграции</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">📐</span>
+            <span>Знание нотаций (BPMN, DFD, ERD)</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">💬</span>
+            <span>Общение с заказчиками</span>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 9: 5 главных вопросов -->
+      <div class="slide">
+        <h1 class="slide-title">5 главных вопросов аналитика</h1>
+        <div class="slide-content">
+          <div class="question">Зачем нужна интеграция?</div>
+          <div class="question">Какие данные передаются?</div>
+          <div class="question">Как часто (онлайн/раз в день)?</div>
+          <div class="question">Кто инициирует (клиент, система)?</div>
+          <div class="question">Какая система главная (мастер)?</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 10: Подготовка к сбору требований -->
+      <div class="slide">
+        <h1 class="slide-title">Подготовка к сбору требований</h1>
+        <div class="slide-content">
+          <p class="text">1. Проанализировать документацию (ЦФТ, CRM)</p>
+          <p class="text">2. Определить текущее состояние</p>
+          <p class="text">3. Зафиксировать будущую картину:</p>
+          <div class="example">
+            <strong>Пример:</strong> клиент открывает счёт → автоматически появляется в ДБО
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 11: Классификация систем -->
+      <div class="slide">
+        <h1 class="slide-title">Классификация систем</h1>
+        <div class="slide-content">
+          <div class="level-box">
+            <strong>Бизнес-данные</strong> → ЦФТ
+          </div>
+          <div class="level-box">
+            <strong>Сервисные</strong> → CRM, ДБО
+          </div>
+          <div class="level-box">
+            <strong>Процессные</strong> → интеграция кредитного процесса
+          </div>
+          <div class="level-box">
+            <strong>Мониторинг</strong> → логирование интеграции
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 12: Техники сбора требований -->
+      <div class="slide">
+        <h1 class="slide-title">Техники сбора требований</h1>
+        <div class="slide-content">
+          <div class="skill">
+            <span class="skill-icon">🗣️</span>
+            <span>Интервью с бизнесом</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">📄</span>
+            <span>Анализ документов</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">👥</span>
+            <span>Workshop</span>
+          </div>
+          <div class="skill">
+            <span class="skill-icon">💡</span>
+            <span>Мозговой штурм</span>
+          </div>
+          <div class="example">
+            <strong>Пример:</strong> при проекте «онлайн-депозиты» собираем требования у фронт-офиса, ИТ, юристов.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 13: Пример вопросов на встрече -->
+      <div class="slide">
+        <h1 class="slide-title">Пример вопросов на встрече</h1>
+        <div class="slide-content">
+          <div class="question">Какая цель интеграции? (показать клиенту все счета в ДБО)</div>
+          <div class="question">Какие данные? (ФИО, остаток, дата)</div>
+          <div class="question">Кто инициирует? (сотрудник или клиент в ДБО)</div>
+          <div class="question">Как контролировать ошибки? (журналирование в ЦФТ)</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 14: Блоки детализации интеграции -->
+      <div class="slide">
+        <h1 class="slide-title">Блоки детализации интеграции</h1>
+        <div class="slide-content">
+          <div class="block">Процесс интеграции</div>
+          <div class="block">Соответствие объектной модели (клиент в CRM ↔ клиент в ЦФТ)</div>
+          <div class="block">Авторизация</div>
+          <div class="block">Права доступа</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 15: Пример из банка -->
+      <div class="slide">
+        <h1 class="slide-title">Пример из банка</h1>
+        <div class="slide-content">
+          <div class="example">
+            <strong>Кейс:</strong> клиент подал заявку на кредит в CRM
+          </div>
+          <ol class="text" style="margin-left: 20px;">
+            <li>CRM формирует заявку</li>
+            <li>Интеграция отправляет её в ЦФТ</li>
+            <li>ЦФТ создаёт продукт и возвращает номер договора</li>
+            <li>CRM показывает клиенту статус</li>
+          </ol>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 16: Журналирование интеграции -->
+      <div class="slide">
+        <h1 class="slide-title">Журналирование интеграции</h1>
+        <div class="slide-content">
+          <p class="text">Логирование обменов между системами.</p>
+          <div class="example">
+            <strong>Пример:</strong> если платёж не дошёл из POS-терминала → брокер сообщений фиксирует ошибку.
+          </div>
+          <p class="text">Позволяет быстро находить и исправлять проблемы.</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 17: Описание объектов интеграции -->
+      <div class="slide">
+        <h1 class="slide-title">Описание объектов интеграции</h1>
+        <div class="slide-content">
+          <div class="block"><strong>Источник:</strong> ЦФТ</div>
+          <div class="block"><strong>Приёмник:</strong> CRM</div>
+          <div class="block"><strong>Поля:</strong> ИНН, ФИО, счёт</div>
+          <div class="block"><strong>Правила перезаписи:</strong> мастер – ЦФТ</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 18: Постановка задач разработчикам -->
+      <div class="slide">
+        <h1 class="slide-title">Постановка задач разработчикам (Jira)</h1>
+        <div class="slide-content">
+          <div class="jira-task">
+            <strong>Заголовок:</strong> «Интеграция ЦФТ и CRM по клиентам»
+          </div>
+          <div class="jira-task">
+            <strong>Описание:</strong> что передаём, зачем
+          </div>
+          <div class="jira-task">
+            <strong>Приложения:</strong> схема интеграции, маппинг полей
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 19: Пример задачи в Jira -->
+      <div class="slide">
+        <h1 class="slide-title">Пример задачи в Jira</h1>
+        <div class="slide-content">
+          <div class="jira-task">
+            <strong>Входящие параметры:</strong> ФИО, дата рождения
+          </div>
+          <div class="jira-task">
+            <strong>Исходящие:</strong> номер договора
+          </div>
+          <div class="jira-task">
+            <strong>Логирование:</strong> успех/ошибка
+          </div>
+          <div class="jira-task">
+            <strong>Ошибки:</strong> «Клиент не найден в ЦФТ»
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 20: Итог -->
+      <div class="slide">
+        <h1 class="slide-title">Итог: зачем аналитик нужен в интеграции</h1>
+        <div class="slide-content">
+          <div class="final-message">
+            Он связывает бизнес и ИТ.<br><br>
+            Без аналитика: риск ошибок, дублирования данных, потеря времени.<br><br>
+            С аналитиком: прозрачная интеграция, меньше ручной работы, довольные клиенты.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 21: Завершающий -->
+      <div class="slide">
+        <h1 class="slide-title">Спасибо за внимание!</h1>
+        <div class="slide-content">
+          <div class="thank-you">Вопросы?</div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-top: 1px solid #eee;">
+      <button class="btn btn-prev" id="prevBtn">← Назад</button>
+      <button class="btn" id="nextBtn">Вперед →</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const slidesContainer = document.getElementById('slidesContainer');
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dots = document.querySelectorAll('.dot');
+      
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function updateSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove('active', 'next');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+          } else if (index < currentSlide) {
+            slide.classList.add('next');
+          }
+        });
+
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentSlide);
+        });
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentSlide = index;
+          updateSlides();
+        });
+      });
+
+      // Управление с клавиатуры
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
