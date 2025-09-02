@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планировщик тренировок</title>
+    <link rel="stylesheet" href="train.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💪 Планировщик тренировок</h1>
+            <p class="subtitle">Создайте свою программу тренировок и отслеживайте прогресс</p>
+        </header>
+
+        <div class="add-exercise">
+            <h2>➕ Добавить упражнение</h2>
+            <div class="input-group">
+                <input type="text" id="exerciseName" placeholder="Название упражнения" class="input-field">
+                <input type="number" id="exerciseSets" placeholder="Подходы" min="1" class="input-field">
+                <input type="number" id="exerciseReps" placeholder="Повторения" min="1" class="input-field">
+                <button onclick="addExercise()" class="add-btn">Добавить</button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Всего упражнений</h3>
+                <span id="totalExercises">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Выполнено</h3>
+                <span id="completedExercises">0</span>
+            </div>
+            <div class="stat-card">
+                <h3>Прогресс</h3>
+                <span id="progressPercent">0%</span>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button onclick="filterExercises('all')" class="filter-btn active">Все</button>
+            <button onclick="filterExercises('active')" class="filter-btn">Активные</button>
+            <button onclick="filterExercises('completed')" class="filter-btn">Выполненные</button>
+        </div>
+
+        <div class="exercises-list" id="exercisesList">
+            <!-- Упражнения будут добавляться через JavaScript -->
+        </div>
+
+        <div class="actions">
+            <button onclick="clearCompleted()" class="action-btn clear-btn">🧹 Очистить выполненные</button>
+            <button onclick="saveWorkout()" class="action-btn save-btn">💾 Сохранить тренировку</button>
+            <button onclick="loadExample()" class="action-btn example-btn">🎯 Пример тренировки</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример 1 сохранение данных</title>
+</head>
+<body>
+    <h1>Сохрани свое имя</h1>
+    <input type="text" id="nameInput" placeholder="Введите ваше имя">
+    <button onclick="saveName()">Сохранить</button>
+    <p id="message"></p>
+    <script>
+        function saveName() {
+            // 1. Находим поле ввода
+            const name = document.getElementById('nameInput').value;
+            // 2. Сохраняем строку в localStorage
+            localStorage.setItem('username', name);
+            // 3. Выводим сообщение об успехе
+            document.getElementById('message').textContent = 'Имя сохранено!';
+        }
+    </script>
+    
+</body>
+</html>
