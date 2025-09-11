@@ -1,0 +1,89 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: aquamarine;
+    margin: 0;
+    padding: 20px;
+}
+.journal-container{
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+h1{
+    text-align: center;
+    color: #333;
+}
+.input-section{
+    text-align: center;
+    margin-bottom: 20px;
+}
+#studentNameInput{
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 60%;
+}
+#addStudentBtn{
+    padding: 10px 15px;
+    border: none;
+    background-color: #007bff;
+    color:white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+#addStudentBtn:hover{
+    background-color: #005635;
+}
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th,td{
+    border: 1px solid #ddd;
+    padding: 13px;
+    text-align: center;
+}
+th{
+    background-color: #f2f2f2;
+    color:#555;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+tr:nth-child(even){
+    background-color: #f9f9f9;
+}
+.grade-input{
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+.average-score{
+    font-weight: bold;
+}
+.average-score.good{
+    color: green;
+}    
+.average-score.satisfactory{
+    color: orange;
+}
+.average-score.bad{
+    color: red;
+}
+.delete-btn{
+    padding: 5px 10px;
+    border: none;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.delete-btn:hover{
+    background-color: #c82333;
+}
