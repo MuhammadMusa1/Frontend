@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор мемов</title>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Генератор Мемов</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="imageUpload" accept="image/*" class="hidden">
+            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
+                📁 Выбрать изображение
+            </button>
+        </div>
+
+        <div class="text-inputs">
+            <input type="text" id="topText" placeholder="Введите верхний текст...">
+            <input type="text" id="bottomText" placeholder="Введите нижний текст...">
+        </div>
+
+        <button class="generate-btn" onclick="generateMeme()">
+            🎨 Сгенерировать мем
+        </button>
+
+        <div class="meme-container">
+            <img id="memeImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300' viewBox='0 0 500 300'%3E%3Crect width='500' height='300' fill='%23f0f0f0'/%3E%3Ctext x='250' y='150' font-family='Arial' font-size='20' fill='%23ccc' text-anchor='middle'%3EВыберите изображение%3C/text%3E%3C/svg%3E" alt="Мем">
+            <div id="topTextDisplay" class="meme-text top-text"></div>
+            <div id="bottomTextDisplay" class="meme-text bottom-text"></div>
+        </div>
+
+        <button class="download-btn" onclick="downloadMeme()">
+            💾 Скачать мем
+        </button>
+    </div>
+</body>
+</html>
+
