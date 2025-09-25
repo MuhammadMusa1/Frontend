@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo Vue.js</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    #todoApp {
+      background: white;
+      width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    input[type="text"]:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #007bff;
+      color: white;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 8px;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+    }
+    li.completed span {
+      text-decoration: line-through;
+      color: #999;
+    }
+    li span {
+      flex-grow: 1;
+      cursor: pointer;
+    }
+    .deleteBtn {
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .deleteBtn:hover {
+      background: #cc0000;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="todoApp">
+      <h2>ToDo Список (Vue.js)</h2>
+      <form @submit.prevent="addTodo">
+        <input type="text" v-model="newTodo" placeholder="Новая задача" required />
+        <button type="submit">Добавить</button>
+      </form>
+      <ul>
+        <li v-for="(todo, index) in todos" :key="index" :class="{completed: todo.completed}">
+          <span @click="toggleComplete(index)">{{ todo.text }}</span>
+          <button class="deleteBtn" @click="deleteTodo(index)">Удалить</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Vue.js CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script>
+    const { createApp, ref, watch, onMounted } = Vue;
+
+    createApp({
+      setup() {
+        const newTodo = ref('');
+        const todos = ref([]);
+
+        const STORAGE_KEY = 'todos_vue';
+
+        // загрузка из localStorage
+        onMounted(() => {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            todos.value = JSON.parse(saved);
+          }
+        });
+
+        // сохранение при каждом изменении
+        watch(todos, (val) => {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
+        }, { deep: true });
+
+        function addTodo() {
+          if (newTodo.value.trim()) {
+            todos.value.push({ text: newTodo.value.trim(), completed: false });
+            newTodo.value = '';
+          }
+        }
+
+        function toggleComplete(index) {
+          todos.value[index].completed = !todos.value[index].completed;
+        }
+
+        function deleteTodo(index) {
+          todos.value.splice(index, 1);
+        }
+
+        return { newTodo, todos, addTodo, toggleComplete, deleteTodo };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
