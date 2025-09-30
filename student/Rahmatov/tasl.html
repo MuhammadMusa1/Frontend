@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Список заметок</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    #note-input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #add-btn {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    #add-btn:hover {
+      background-color: #218838;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      background: #fff;
+      margin: 10px 0;
+      padding: 10px;
+      border-left: 5px solid #28a745;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Заметки</h1>
+
+  <input type="text" id="note-input" placeholder="Введите текст заметки..." />
+  <button id="add-btn">Добавить</button>
+
+  <ul id="note-list"></ul>
+
+  <script>
+    const addBtn = document.getElementById('add-btn');
+    const noteInput = document.getElementById('note-input');
+    const noteList = document.getElementById('note-list');
+
+    addBtn.addEventListener('click', () => {
+      const noteText = noteInput.value.trim();
+      if (noteText === '') return;
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <span>${noteText}</span>
+        <button class="delete-btn">Удалить</button>
+      `;
+
+      li.querySelector('.delete-btn').addEventListener('click', () => {
+        li.remove();
+      });
+
+      noteList.appendChild(li);
+      noteInput.value = '';
+      noteInput.focus();
+    });
+
+    // Позволяет добавлять заметку по Enter
+    noteInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>
+
+</body>
+</html>

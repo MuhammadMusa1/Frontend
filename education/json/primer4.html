@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Ваши любимый фрукты</h1>
+    <ul id="fruitList"></ul>
+    <script>
+        // Загрузка списка фруктов из localStorage
+        const jsonFruits = localStorage.getItem('favoriteFruits');
+
+        if(jsonFruits){
+        // Преобразование JSON-строки обратно в массив    
+            const myFruits = JSON.parse(jsonFruits);
+        // Создание списка на странице    
+            const listElement = document.getElementById('fruitList');
+            myFruits.forEach(fruit => {
+                const li = document.createElement('li');
+                li.textContent = fruit;
+                listElement.appendChild(li);
+            });
+        }
+    </script>
+    
+</body>
+</html>

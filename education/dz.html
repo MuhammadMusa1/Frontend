@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Дневник</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            transition: background-color 0.5s ease;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body id="body">
+
+    <div class="container">
+        <h1 id="greeting">Привет, незнакомец!</h1>
+        <p>Пожалуйста, представься и выбери свой любимый цвет.</p>
+        <input type="text" id="nameInput" placeholder="Твоё имя">
+        <input type="color" id="colorInput" value="#6495ED">
+        <br>
+        <button onclick="saveAndGreet()">Сохранить</button>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

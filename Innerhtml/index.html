@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список комментариев</title>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            padding: 2rem;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        input, button {
+            padding: 0.8rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            cursor: pointer;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        #commentList {
+            margin-top: 1rem;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Список комментариев</h1>
+        <p>Добавляй свои комментарии!</p>
+        <form id="commentForm">
+            <input id="commentInput" type="text" placeholder="Введи комментарий">
+            <button type="submit">Добавить</button>
+        </form>
+        <div id="commentList"></div>
+    </div>
+
+    <script>
+        // Находим форму, поле и контейнер
+        const form = document.getElementById("commentForm");
+        const commentInput = document.getElementById("commentInput");
+        const commentList = document.getElementById("commentList");
+        let comments = [];
+
+        // Функция имитирует отправку на сервер
+        async function postCommentToServer(commentText) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return {
+                id: Math.floor(Math.random() * 1000),
+                text: commentText
+            };
+        }
+
+        // Функция для отображения комментариев
+        function renderComment(comment) {
+            comments.push(comment);
+            commentList.innerHTML = comments.map(c => `<p>Комментарий #${c.id}: ${c.text}</p>`).join("");
+        }
+
+        // Слушаем отправку формы
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const commentText = commentInput.value.trim();
+            if (!commentText) {
+                commentList.innerHTML = "<p style='color: #ff6b6b'>Поле пустое!</p>";
+                return;
+            }
+            commentList.innerHTML = "<p>Отправка...</p>";
+            const comment = await postCommentToServer(commentText);
+            renderComment(comment);
+            commentInput.value = "";
+        });
+    </script>
+</body>
+</html>

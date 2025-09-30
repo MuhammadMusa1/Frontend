@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пример 5: Сохранение объекта</title>
+</head>
+<body>
+
+    <h1>Мой Герой</h1>
+    <p>Имя: <span id="heroName"></span></p>
+    <p>Уровень: <span id="heroLevel"></span></p>
+    <p>Инвентарь: <span id="heroInventory"></span></p>
+
+    <button onclick="levelUp()">Увеличить уровень</button>
+    <button onclick="saveHero()">Сохранить героя</button>
+
+    <script>
+        let hero = {
+            name: 'Рыцарь',
+            level: 1,
+            inventory: ['меч', 'щит']
+        };
+
+        // Функция для обновления отображения
+        function updateDisplay() {
+            document.getElementById('heroName').textContent = hero.name;
+            document.getElementById('heroLevel').textContent = hero.level;
+            document.getElementById('heroInventory').textContent = hero.inventory.join(', ');
+        }
+
+        // Загружаем героя из localStorage, если он есть
+        const savedHero = localStorage.getItem('savedHero');
+        if (savedHero) {
+            hero = JSON.parse(savedHero);
+        }
+        updateDisplay(); // Обновляем данные на странице при загрузке
+
+        function levelUp() {
+            hero.level++;
+            hero.inventory.push('зелье');
+            updateDisplay();
+        }
+
+        function saveHero() {
+            const heroString = JSON.stringify(hero);
+            localStorage.setItem('savedHero', heroString);
+            alert('Герой сохранен!');
+        }
+    </script>
+</body>
+</html>

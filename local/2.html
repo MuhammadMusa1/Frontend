@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пример загрузка данных</title>
+</head>
+<body>
+    <h1>Привет, <span id="userName">Гость</span></h1>
+    <script>
+        // 1. Пытаемся загрузить имя из localStorage
+        const savedName = localStorage.getItem('username');
+        // 2. Если имя есть, отображаем его
+        if (savedName) {
+            document.getElementById('userName').textContent = savedName;
+        }
+    </script>
+</body>
+</html>

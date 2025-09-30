@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фильтр товаров на Vue.js </title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+    <div id = "app">
+        <h1>Поиск и фильтр товаров на Vue.js </h1>
+        <input v-model = "searchTerm" placeholder="Введите название товара">
+        <ul>
+            <li v-for = "product in filteredProducts" :key = "product.id">
+                {{ product.name }} - {{ product.price }} сомони
+
+            </li>
+        </ul>
+        <p v-if = "filteredProducts.length === 0">Товары не найдены.</p>
+
+
+    </div>
+<script src="script.js"></script>
+</body>
+</html>

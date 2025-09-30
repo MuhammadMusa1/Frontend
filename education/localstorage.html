@@ -1,0 +1,840 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>localStorage и JSON: Как веб-сайты запоминают нас?</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #74b9ff 0%, #00b894 100%);
+      color: #333;
+      line-height: 1.6;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .presentation {
+      width: 90%;
+      max-width: 1000px;
+      height: 80vh;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slides-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 40px;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide.next {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+
+    .slide-title {
+      font-size: 2.2rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .text {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 16px;
+    }
+
+    .analogy {
+      background: #f0f7ff;
+      border-left: 4px solid #00b894;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: #2c3e50;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      color: #856404;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .code-block {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      overflow-x: auto;
+    }
+
+    .code-line {
+      display: flex;
+      margin: 4px 0;
+    }
+
+    .line-number {
+      color: #999;
+      width: 30px;
+      text-align: right;
+      margin-right: 10px;
+    }
+
+    .copy-btn {
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      float: right;
+      margin-top: -5px;
+    }
+
+    .copy-btn:hover {
+      background: #00a082;
+    }
+
+    .example {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .example-box {
+      flex: 1;
+      min-width: 200px;
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+      text-align: center;
+    }
+
+    .icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .locker {
+      font-size: 5rem;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .chest {
+      font-size: 5rem;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .btn {
+      background: #00b894;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn:hover {
+      background: #00a082;
+      transform: translateY(-2px);
+    }
+
+    .btn-prev {
+      background: #6c757d;
+    }
+
+    .btn-prev:hover {
+      background: #5a6268;
+    }
+
+    .nav-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #00b894;
+      transform: scale(1.2);
+    }
+
+    .visual {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .question {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #ffeaa7;
+      font-weight: 500;
+    }
+
+    .task {
+      background: #d6eaf8;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #85c1e9;
+    }
+
+    .game-example {
+      background: #e8f8f5;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      border: 1px solid #82e0aa;
+    }
+
+    .json-visual {
+      font-family: monospace;
+      background: #e9ecef;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 768px) {
+      .presentation {
+        width: 95%;
+        height: 90vh;
+      }
+      .slide-title {
+        font-size: 1.8rem;
+      }
+      .text {
+        font-size: 1rem;
+      }
+      .code-block {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation">
+    <div class="slides-container" id="slidesContainer">
+      <!-- Слайд 1: Титульный -->
+      <div class="slide active">
+        <h1 class="slide-title">localStorage и JSON</h1>
+        <div class="slide-content">
+          <div class="visual">
+            <div class="locker">🏫</div>
+            <div class="chest">🧝‍♂️</div>
+          </div>
+          <p class="text" style="text-align: center; font-size: 1.4rem;">
+            Как веб-сайты запоминают нас?
+          </p>
+          <p class="text" style="text-align: center; margin-top: 20px;">
+            Просто, понятно и с примерами!
+          </p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 2: Проблема -->
+      <div class="slide">
+        <h1 class="slide-title">Почему сайт "забывает" нас?</h1>
+        <div class="slide-content">
+          <p class="text">Когда вы закрываете сайт, он "забывает" вас, как будто вы стёрли доску.</p>
+          <div class="analogy">
+            Представьте, что каждый раз в школе вам приходится заново объяснять, кто вы и где ваш шкафчик.
+          </div>
+          <p class="text">Но есть способ запомнить данные — <span class="highlight">localStorage</span>!</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 3: localStorage — шкафчик -->
+      <div class="slide">
+        <h1 class="slide-title">localStorage — как шкафчик в школе</h1>
+        <div class="slide-content">
+          <div class="locker">🎒</div>
+          <p class="text">Каждый сайт даёт вам <span class="highlight">личный шкафчик</span> в браузере.</p>
+          <div class="analogy">
+            Вы кладёте туда свои вещи (данные), и они остаются, даже когда вы уходите и возвращаетесь завтра.
+          </div>
+          <p class="text">Только вы можете открыть свой шкафчик на этом сайте!</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 4: Метод setItem() -->
+      <div class="slide">
+        <h1 class="slide-title">setItem() — положить вещь в шкафчик</h1>
+        <div class="slide-content">
+          <p class="text">Чтобы положить что-то в шкафчик, используйте <code>localStorage.setItem()</code>.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <div class="code-line">
+              <span class="line-number">1</span>
+              <span>localStorage.setItem("имя", "Алексей");</span>
+            </div>
+          </div>
+          <div class="analogy">
+            Как повесить бейджик с именем на крючок в шкафчике.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 5: Метод getItem() -->
+      <div class="slide">
+        <h1 class="slide-title">getItem() — достать вещь из шкафчика</h1>
+        <div class="slide-content">
+          <p class="text">Чтобы достать что-то из шкафчика, используйте <code>localStorage.getItem()</code>.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <div class="code-line">
+              <span class="line-number">1</span>
+              <span>let имя = localStorage.getItem("имя");</span>
+            </div>
+            <div class="code-line">
+              <span class="line-number">2</span>
+              <span>console.log(имя); // "Алексей"</span>
+            </div>
+          </div>
+          <div class="analogy">
+            Заглянули в шкафчик, увидели бейджик и прочитали имя.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 6: Метод removeItem() -->
+      <div class="slide">
+        <h1 class="slide-title">removeItem() — убрать вещь из шкафчика</h1>
+        <div class="slide-content">
+          <p class="text">Чтобы убрать что-то из шкафчика, используйте <code>localStorage.removeItem()</code>.</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <div class="code-line">
+              <span class="line-number">1</span>
+              <span>localStorage.removeItem("имя");</span>
+            </div>
+          </div>
+          <div class="analogy">
+            Сняли бейджик с крючка и выбросили — теперь его нет в шкафчике.
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 7: Вопрос -->
+      <div class="slide">
+        <h1 class="slide-title">Вопрос на засыпку</h1>
+        <div class="slide-content">
+          <div class="question">
+            Что будет, если я закрою сайт и открою его завтра?
+          </div>
+          <div class="example">
+            <div class="example-box">
+              <div class="icon">✅</div>
+              <p>Данные останутся</p>
+            </div>
+            <div class="example-box">
+              <div class="icon">❌</div>
+              <p>Данные исчезнут</p>
+            </div>
+          </div>
+          <p class="text" style="text-align: center; font-weight: 500;">Правильный ответ: ✅ Данные останутся!</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 8: Проблема с объектами -->
+      <div class="slide">
+        <h1 class="slide-title">А что, если нужно сохранить больше?</h1>
+        <div class="slide-content">
+          <p class="text">А если вы хотите сохранить не просто имя, а целый профиль?</p>
+          <div class="json-visual">
+            { "имя": "Алексей", "уровень": 5, "очки": 120 }
+          </div>
+          <div class="analogy">
+            В шкафчик можно положить только "строки", как бумажки. А объект — это целая папка!
+          </div>
+          <p class="text">Нужен способ превратить папку в строку...</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 9: JSON.stringify и JSON.parse -->
+      <div class="slide">
+        <h1 class="slide-title">JSON — волшебный сундук</h1>
+        <div class="slide-content">
+          <div class="chest">✨</div>
+          <p class="text"><code>JSON.stringify()</code> — упаковывает объект в строку</p>
+          <p class="text"><code>JSON.parse()</code> — распаковывает строку обратно в объект</p>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+            <div class="code-line">
+              <span class="line-number">1</span>
+              <span>let строка = JSON.stringify(объект);</span>
+            </div>
+            <div class="code-line">
+              <span class="line-number">2</span>
+              <span>let объект = JSON.parse(строка);</span>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 10: Полный пример -->
+      <div class="slide">
+        <h1 class="slide-title">Пример: сохранение игрока</h1>
+        <div class="slide-content">
+          <div class="game-example">
+            <p>Сохраняем данные игрока в "шкафчике":</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+              <div class="code-line">
+                <span class="line-number">1</span>
+                <span>let игрок = {</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">2</span>
+                <span>&nbsp;&nbsp;имя: "Макс",</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">3</span>
+                <span>&nbsp;&nbsp;уровень: 3,</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">4</span>
+                <span>&nbsp;&nbsp;очки: 75</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">5</span>
+                <span>};</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">6</span>
+                <span>localStorage.setItem("игрок", JSON.stringify(игрок));</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 11: Загрузка данных -->
+      <div class="slide">
+        <h1 class="slide-title">Загрузка данных игрока</h1>
+        <div class="slide-content">
+          <div class="game-example">
+            <p>Когда игрок возвращается — достаём данные:</p>
+            <div class="code-block">
+              <button class="copy-btn" onclick="copyCode(this)">Копировать</button>
+              <div class="code-line">
+                <span class="line-number">1</span>
+                <span>let saved = localStorage.getItem("игрок");</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">2</span>
+                <span>if (saved) {</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">3</span>
+                <span>&nbsp;&nbsp;let игрок = JSON.parse(saved);</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">4</span>
+                <span>&nbsp;&nbsp;console.log(игрок.имя); // "Макс"</span>
+              </div>
+              <div class="code-line">
+                <span class="line-number">5</span>
+                <span>}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 12: Задание -->
+      <div class="slide">
+        <h1 class="slide-title">Ваше задание</h1>
+        <div class="slide-content">
+          <div class="task">
+            <p>Представьте, что вы создаете сайт-дневник.</p>
+            <p>Напишите код, который:</p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+              <li>Сохраняет имя пользователя</li>
+              <li>Сохраняет его любимый цвет</li>
+              <li>При открытии сайта — приветствует его по имени и подстраивает фон под цвет</li>
+            </ol>
+          </div>
+          <p class="text" style="text-align: center; font-weight: 500;">Подсказка: используйте <code>localStorage</code> и <code>JSON</code>!</p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+
+      <!-- Слайд 13: Заключение -->
+      <div class="slide">
+        <h1 class="slide-title">Вы — молодцы!</h1>
+        <div class="slide-content">
+          <div class="visual">
+            <div class="locker">🎒</div>
+            <div class="chest">✨</div>
+          </div>
+          <p class="text" style="text-align: center; font-size: 1.4rem;">
+            Теперь вы знаете, как сайты запоминают нас!
+          </p>
+          <p class="text" style="text-align: center; margin-top: 20px;">
+            Попробуйте сами — и пусть ваши сайты никогда вас не забывают!
+          </p>
+        </div>
+        <div class="nav-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot active"></div>
+          <div class="dot"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; padding: 15px; background: #f8f9fa; border-top: 1px solid #eee;">
+      <button class="btn btn-prev" id="prevBtn">← Назад</button>
+      <button class="btn" id="nextBtn">Вперед →</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const slidesContainer = document.getElementById('slidesContainer');
+      const slides = document.querySelectorAll('.slide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dots = document.querySelectorAll('.dot');
+      
+      let currentSlide = 0;
+      const totalSlides = slides.length;
+
+      function updateSlides() {
+        slides.forEach((slide, index) => {
+          slide.classList.remove('active', 'next');
+          if (index === currentSlide) {
+            slide.classList.add('active');
+          } else if (index < currentSlide) {
+            slide.classList.add('next');
+          }
+        });
+
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('active', index === currentSlide);
+        });
+      }
+
+      prevBtn.addEventListener('click', () => {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+          currentSlide = index;
+          updateSlides();
+        });
+      });
+
+      // Копирование кода
+      window.copyCode = function(button) {
+        const codeLines = button.parentElement.querySelectorAll('.code-line');
+        let code = '';
+        codeLines.forEach(line => {
+          code += line.innerText.trim() + '\n';
+        });
+        
+        navigator.clipboard.writeText(code.trim()).then(() => {
+          const originalText = button.textContent;
+          button.textContent = 'Скопировано!';
+          setTimeout(() => {
+            button.textContent = originalText;
+          }, 2000);
+        });
+      };
+
+      // Управление с клавиатуры
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) {
+          currentSlide++;
+          updateSlides();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

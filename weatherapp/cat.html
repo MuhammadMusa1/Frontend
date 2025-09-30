@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальный Питомец: Эпичное Приключение</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 700px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+        }
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        .pet {
+            font-size: 5rem;
+            margin: 1rem 0;
+            transition: transform 0.3s ease, opacity 0.5s ease;
+        }
+        .pet.happy {
+            transform: scale(1.2) rotate(5deg);
+        }
+        .pet.sad {
+            transform: scale(0.8) rotate(-5deg);
+            opacity: 0.7;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+        }
+        .stat {
+            background: #e8f5e9;
+            padding: 0.5rem;
+            border-radius: 8px;
+            width: 30%;
+            position: relative;
+        }
+        .progress {
+            height: 10px;
+            background: #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #38bdf8;
+            transition: width 0.5s ease;
+        }
+        button {
+            background: #38bdf8;
+            color: #1a202c;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 0.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        .achievements {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #e5e7eb;
+            border-radius: 8px;
+            color: #1a202c;
+        }
+        .achievement {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+        .customize {
+            margin: 1rem 0;
+        }
+        input[type="text"] {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #1a202c;
+            font-size: 1rem;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            p, button, input { font-size: 1rem; }
+            .pet { font-size: 3.5rem; }
+            .stat { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Виртуальный Питомец <span class="emoji">🐾</span></h1>
+        <p>Что делает: Ухаживайте за питомцем, кастомизируйте его и получайте достижения!</p>
+        <p>Что изучаем: Игровой цикл, анимации, состояния, <code class="highlight">localStorage</code>, достижения.</p>
+        <div id="app">
+            <!-- Кастомизация имени и вида -->
+            <div class="customize">
+                <input v-model="petName" placeholder="Имя питомца" @input="saveState">
+                <button @click="changeAppearance">Сменить вид 🐱/🐶</button>
+            </div>
+            <!-- Питомец с анимацией -->
+            <div class="pet" :class="moodClass">{{ petEmoji }}</div>
+            <!-- Показатели потребностей с прогресс-барами -->
+            <div class="stats">
+                <div class="stat">
+                    Голод: {{ Math.round(hunger) }}%
+                    <div class="progress">
+                        <div class="progress-bar" :style="{ width: hunger + '%' }"></div>
+                    </div>
+                </div>
+                <div class="stat">
+                    Счастье: {{ Math.round(happiness) }}%
+                    <div class="progress">
+                        <div class="progress-bar" :style="{ width: happiness + '%' }"></div>
+                    </div>
+                </div>
+                <div class="stat">
+                    Энергия: {{ Math.round(energy) }}%
+                    <div class="progress">
+                        <div class="progress-bar" :style="{ width: energy + '%' }"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Кнопки действий -->
+            <button @click="feed">Покормить 🍎</button>
+            <button @click="play">Играть ⚽</button>
+            <button @click="sleep">Спать 😴</button>
+            <button @click="pet">Погладить 🤗</button>
+            <!-- Мини-игра -->
+            <div class="minigame">
+                <button @click="playMinigame">Мини-игра: Поймай мяч! 🎾</button>
+                <p>Очки: {{ minigameScore }}</p>
+            </div>
+            <!-- Состояние и достижения -->
+            <p>Состояние: {{ status }}</p>
+            <div class="achievements">
+                <h3>Достижения 🏆</h3>
+                <p v-for="achievement in achievements" class="achievement">{{ achievement }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Создаём приложение Vue
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    petName: 'Пушистик', // Имя питомца
+                    petType: 'dog', // Тип питомца (dog/cat)
+                    hunger: 50, // Голод (0–100)
+                    happiness: 50, // Счастье
+                    energy: 50, // Энергия
+                    petStage: 0, // Стадия эволюции (0: малыш, 1: взрослый)
+                    status: 'Всё нормально!', // Текущее состояние
+                    minigameScore: 0, // Очки мини-игры
+                    achievements: [], // Список достижений
+                };
+            },
+            computed: {
+                // Эмодзи питомца в зависимости от типа и стадии
+                petEmoji() {
+                    const emojis = {
+                        dog: ['🐶', '🐕'],
+                        cat: ['🐱', '🐈']
+                    };
+                    return emojis[this.petType][this.petStage];
+                },
+                // Класс для анимации на основе счастья
+                moodClass() {
+                    return this.happiness > 70 ? 'happy' : this.happiness < 30 ? 'sad' : '';
+                }
+            },
+            methods: {
+                // Действие: покормить
+                feed() {
+                    this.hunger += 20;
+                    this.happiness += 10;
+                    this.energy -= 5;
+                    this.checkAchievements('fed');
+                    this.checkEvolution();
+                    this.saveState();
+                },
+                // Действие: играть
+                play() {
+                    this.happiness += 20;
+                    this.energy -= 10;
+                    this.hunger -= 5;
+                    this.checkAchievements('played');
+                    this.checkEvolution();
+                    this.saveState();
+                },
+                // Действие: спать
+                sleep() {
+                    this.energy += 20;
+                    this.hunger -= 5;
+                    this.happiness -= 5;
+                    this.checkAchievements('slept');
+                    this.checkEvolution();
+                    this.saveState();
+                },
+                // Действие: погладить
+                pet() {
+                    this.happiness += 15;
+                    this.energy -= 5;
+                    this.checkAchievements('petted');
+                    this.saveState();
+                },
+                // Мини-игра: поймай мяч
+                playMinigame() {
+                    this.minigameScore += 10;
+                    this.happiness += 10;
+                    this.energy -= 10;
+                    this.checkAchievements('minigame');
+                    this.saveState();
+                },
+                // Смена вида питомца (собака/кошка)
+                changeAppearance() {
+                    this.petType = this.petType === 'dog' ? 'cat' : 'dog';
+                    this.checkAchievements('customized');
+                    this.saveState();
+                },
+                // Обновление потребностей
+                updateNeeds() {
+                    this.hunger -= 0.1;
+                    this.happiness -= 0.05;
+                    this.energy -= 0.03;
+                    // Ограничиваем значения
+                    this.hunger = Math.max(0, Math.min(100, this.hunger));
+                    this.happiness = Math.max(0, Math.min(100, this.happiness));
+                    this.energy = Math.max(0, Math.min(100, this.energy));
+                    this.checkMood();
+                    this.saveState();
+                },
+                // Проверка настроения
+                checkMood() {
+                    if (this.hunger < 20) {
+                        this.status = `${this.petName} голоден! 😣`;
+                    } else if (this.happiness < 20) {
+                        this.status = `${this.petName} грустит... 😢`;
+                    } else if (this.energy < 20) {
+                        this.status = `${this.petName} устал! 😴`;
+                    } else {
+                        this.status = `${this.petName} доволен! 😊`;
+                    }
+                },
+                // Проверка эволюции
+                checkEvolution() {
+                    if (this.hunger > 80 && this.happiness > 80 && this.energy > 80 && this.petStage === 0) {
+                        this.petStage = 1;
+                        this.status = `${this.petName} вырос! 🎉`;
+                        this.checkAchievements('evolved');
+                    }
+                },
+                // Проверка достижений
+                checkAchievements(action) {
+                    const achievementMap = {
+                        fed: { name: 'Мастер Кормления', condition: this.hunger >= 100 },
+                        played: { name: 'Искры Веселья', condition: this.happiness >= 100 },
+                        slept: { name: 'Сонный Герой', condition: this.energy >= 100 },
+                        petted: { name: 'Нежный Уход', condition: this.happiness >= 90 },
+                        minigame: { name: 'Чемпион Игры', condition: this.minigameScore >= 50 },
+                        customized: { name: 'Стилист Питомца', condition: true },
+                        evolved: { name: 'Эволюция!', condition: this.petStage === 1 }
+                    };
+                    if (achievementMap[action] && achievementMap[action].condition) {
+                        const achievement = achievementMap[action].name;
+                        if (!this.achievements.includes(achievement)) {
+                            this.achievements.push(achievement);
+                        }
+                    }
+                },
+                // Сохранение состояния
+                saveState() {
+                    localStorage.setItem('virtualPet', JSON.stringify({
+                        petName: this.petName,
+                        petType: this.petType,
+                        hunger: this.hunger,
+                        happiness: this.happiness,
+                        energy: this.energy,
+                        petStage: this.petStage,
+                        minigameScore: this.minigameScore,
+                        achievements: this.achievements
+                    }));
+                },
+                // Загрузка состояния
+                loadState() {
+                    const saved = localStorage.getItem('virtualPet');
+                    if (saved) {
+                        const state = JSON.parse(saved);
+                        this.petName = state.petName || 'Пушистик';
+                        this.petType = state.petType || 'dog';
+                        this.hunger = state.hunger || 50;
+                        this.happiness = state.happiness || 50;
+                        this.energy = state.energy || 50;
+                        this.petStage = state.petStage || 0;
+                        this.minigameScore = state.minigameScore || 0;
+                        this.achievements = state.achievements || [];
+                    }
+                }
+            },
+            mounted() {
+                // Загружаем состояние при старте
+                this.loadState();
+                // Запускаем игровой цикл
+                const gameLoop = () => {
+                    this.updateNeeds();
+                    requestAnimationFrame(gameLoop);
+                };
+                gameLoop();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

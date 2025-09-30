@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Инструменты для тестирования API</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #dbeafe);
+      color: #222;
+      overflow: hidden;
+    }
+    .slide {
+      display: none;
+      height: 100vh;
+      width: 100vw;
+      padding: 3rem;
+      box-sizing: border-box;
+      text-align: center;
+      transition: opacity 0.8s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .active {
+      display: flex !important;
+      opacity: 1;
+      animation: fadeIn 1s;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+    h1, h2 {
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+    }
+    h2 {
+      font-size: 2rem;
+    }
+    p, li {
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+    ul {
+      text-align: left;
+      max-width: 600px;
+      margin: 1rem auto;
+    }
+    .nav {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      z-index: 100;
+    }
+    button {
+      background: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.2s, background 0.3s;
+    }
+    button:hover {
+      background: #3b82f6;
+      transform: scale(1.05);
+    }
+    .tooltip {
+      position: relative;
+      cursor: help;
+      border-bottom: 1px dashed #3b82f6;
+      color: #1e40af;
+      font-weight: 500;
+    }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 250px;
+      background: #1e40af;
+      color: #fff;
+      text-align: left;
+      padding: 10px;
+      border-radius: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9rem;
+    }
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    pre {
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 15px;
+      text-align: left;
+      border-radius: 10px;
+      overflow-x: auto;
+      max-width: 700px;
+      margin: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    code {
+      font-family: monospace;
+    }
+    img {
+      max-width: 70%;
+      border-radius: 15px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      margin-top: 20px;
+    }
+    .highlight-box {
+      background: #eff6ff;
+      padding: 20px;
+      border-left: 6px solid #3b82f6;
+      border-radius: 8px;
+      max-width: 700px;
+      margin: 1rem auto;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+<body>
+  <!-- Слайды -->
+  <div class="slide active">
+    <h1>Инструменты для тестирования API</h1>
+    <p>Добро пожаловать! Сегодня мы простыми словами разберём, что такое API и как его можно тестировать.</p>
+    <div class="highlight-box">
+      <em>API — это как меню в ресторане: вы выбираете блюдо (функцию), делаете заказ (запрос) и получаете еду (ответ).</em>
+    </div>
+  </div>
+
+  <div class="slide">
+    <h2>Что такое <span class="tooltip">API
+      <span class="tooltiptext">Application Programming Interface — набор правил для общения программ.</span>
+    </span>?</h2>
+    <p>API — это как официант: вы говорите, что хотите, а он приносит заказ с кухни.</p>
+  </div>
+
+  <div class="slide">
+    <h2>Зачем тестировать API?</h2>
+    <div class="highlight-box">
+      <ul>
+        <li>Чтобы убедиться, что «кухня» готовит правильно.</li>
+        <li>Чтобы официант не перепутал заказы.</li>
+        <li>Чтобы избежать проблем на продакшене.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="slide">
+    <h2>Основные типы запросов</h2>
+    <p><b>GET</b> — спросить официанта: «Покажи меню». (Получаем данные)</p>
+    <p><b>POST</b> — заказать блюдо: «Принеси пиццу». (Отправляем данные)</p>
+    <p><b>PUT</b> — заменить блюдо: «Сделай другой гарнир к мясу». (Обновляем данные)</p>
+    <p><b>PATCH</b> — подправить заказ: «Добавь сыр к пицце». (Частичное обновление)</p>
+    <p><b>DELETE</b> — отменить блюдо: «Отмени салат». (Удаляем данные)</p>
+    <p><b>HEAD</b> — спросить только «какие блюда есть?», без деталей. (Метаданные)</p>
+  </div>
+
+  <div class="slide">
+    <h2>Postman</h2>
+    <p>Postman — приложение для отправки запросов к API и получения ответов.</p>
+    <img src="https://voyager.postman.com/illustration/postman-logo-yellow.svg" alt="Postman Logo">
+  </div>
+
+  <div class="slide">
+    <h2>Пример запроса в Postman</h2>
+    <pre><code>GET https://jsonplaceholder.typicode.com/posts/1</code></pre>
+    <p>В ответ вы получите данные в формате JSON.</p>
+  </div>
+
+  <div class="slide">
+    <h2>Возможности Postman</h2>
+    <ul>
+      <li>Сохранять запросы</li>
+      <li>Группировать их в коллекции</li>
+      <li>Автоматизировать тестирование</li>
+    </ul>
+  </div>
+
+  <div class="slide">
+    <h2>Swagger</h2>
+    <p>Swagger показывает документацию по API в удобном виде. Это как меню с картинками и описанием.</p>
+    <img src="https://swagger.io/wp-content/uploads/2020/04/swaggerhub.png" alt="Swagger пример">
+  </div>
+
+  <div class="slide">
+    <h2>Пример Swagger UI</h2>
+    <p>В Swagger UI видно список запросов (эндпоинтов) и параметры.</p>
+  </div>
+
+  <div class="slide">
+    <h2>Выводы</h2>
+    <div class="highlight-box">
+      <ul>
+        <li>API — это способ общения программ.</li>
+        <li>Тестирование помогает избежать ошибок.</li>
+        <li>Инструменты: Postman и Swagger.</li>
+      </ul>
+      <p><b>Тестировать API может каждый!</b></p>
+    </div>
+  </div>
+
+  <!-- Навигация -->
+  <div class="nav">
+    <button id="prevBtn">⬅ Назад</button>
+    <button id="nextBtn">Вперед ➡</button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.remove('active');
+      });
+      slides[index].classList.add('active');
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      showSlide(currentSlide);
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', nextSlide);
+    document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+  </script>
+</body>
+</html>

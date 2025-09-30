@@ -1,0 +1,56 @@
+body { 
+    font-family: sans-serif; 
+    max-width: 600px; 
+    margin: auto; 
+    padding: 20px; 
+    background-color: #f0f4f8; /* Легкий фон */
+    color: #333;
+}
+h1, h2 { 
+    text-align: center; 
+    color: #004d99;
+}
+textarea { 
+    width: 100%; 
+    height: 100px; 
+    padding: 10px; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+button { 
+    padding: 10px 15px; 
+    background-color: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer; 
+    font-size: 1em;
+}
+button:hover {
+    background-color: #0052a3;
+}
+ul { 
+    list-style-type: none; 
+    padding: 0; 
+}
+li { 
+    background: #ffffff; /* Белый фон для записей */
+    padding: 15px; 
+    margin-bottom: 10px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+.mood-item { 
+    display: flex; 
+    flex-direction: column;
+}
+.mood-item .content {
+    margin-bottom: 5px;
+}
+.mood-item .date { 
+    color: #888; 
+    font-size: 0.9em; 
+    align-self: flex-end; /* Выравнивает дату по правому краю */
+}

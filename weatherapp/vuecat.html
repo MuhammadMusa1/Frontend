@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Виртуальный питомец на Vue.js</title>
+    <!-- Vue.js через CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 400px;
+            height: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .pet-status {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .status-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .pet-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: #f0f8ff;
+        }
+
+        .pet {
+            width: 180px;
+            height: 180px;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .pet-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #667eea;
+            border-radius: 50% 50% 50% 50%;
+            z-index: 1;
+            animation: bounce 2s infinite alternate;
+        }
+
+        .pet-head {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 100px;
+            background-color: #667eea;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .pet-eye {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            top: 35px;
+            z-index: 3;
+        }
+
+        .pet-eye.left {
+            left: 30px;
+        }
+
+        .pet-eye.right {
+            right: 30px;
+        }
+
+        .pet-pupil {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 50%;
+            top: 6px;
+            left: 6px;
+        }
+
+        .pet-mouth {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 15px;
+            border-bottom: 3px solid #333;
+            border-radius: 50%;
+            z-index: 3;
+        }
+
+        .pet-leg {
+            position: absolute;
+            width: 20px;
+            height: 40px;
+            background-color: #667eea;
+            border-radius: 10px;
+            bottom: -10px;
+            z-index: 1;
+        }
+
+        .pet-leg.left {
+            left: 40px;
+        }
+
+        .pet-leg.right {
+            right: 40px;
+        }
+
+        .pet-tail {
+            position: absolute;
+            width: 40px;
+            height: 15px;
+            background-color: #667eea;
+            border-radius: 10px;
+            top: 50px;
+            right: -25px;
+            transform: rotate(20deg);
+            z-index: 1;
+        }
+
+        .pet-happy {
+            animation: happy-bounce 0.5s ease-in-out;
+        }
+
+        .pet-sad {
+            animation: sad-bounce 0.5s ease-in-out;
+        }
+
+        .pet-tired {
+            animation: tired-bounce 0.5s ease-in-out;
+        }
+
+        .pet-eating {
+            animation: eating-animation 1s ease-in-out;
+        }
+
+        .pet-playing {
+            animation: play-animation 1s ease-in-out;
+        }
+
+        .actions {
+            display: flex;
+            padding: 20px;
+            gap: 10px;
+            background-color: #f8f9fa;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .action-btn.feed {
+            background-color: #4caf50;
+        }
+
+        .action-btn.play {
+            background-color: #2196f3;
+        }
+
+        .action-btn.sleep {
+            background-color: #9c27b0;
+        }
+
+        .action-btn.clean {
+            background-color: #ff9800;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+
+        .notification {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #333;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes happy-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px) scale(1.05); }
+        }
+
+        @keyframes sad-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px) scale(0.95); }
+        }
+
+        @keyframes tired-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px) rotate(2deg); }
+        }
+
+        @keyframes eating-animation {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes play-animation {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05) rotate(5deg); }
+            75% { transform: scale(1.05) rotate(-5deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            z-index: 5;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        .decoration:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .decoration:nth-child(2) {
+            top: 30%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+
+        .decoration:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .decoration:nth-child(4) {
+            bottom: 30%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .pet-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .mood-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="header">
+                <h1>Виртуальный питомец</h1>
+                <div class="pet-name">{{ petName }}</div>
+            </div>
+
+            <div class="pet-status">
+                <div class="status-item">
+                    <div class="status-label">Сытость</div>
+                    <div class="status-value">{{ Math.max(0, Math.min(100, petState.food)) }}%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="{ 
+                            width: Math.max(0, Math.min(100, petState.food)) + '%', 
+                            backgroundColor: petState.food > 70 ? '#4caf50' : petState.food > 40 ? '#ff9800' : '#f44336'
+                        }"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Счастье</div>
+                    <div class="status-value">{{ Math.max(0, Math.min(100, petState.happiness)) }}%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="{ 
+                            width: Math.max(0, Math.min(100, petState.happiness)) + '%', 
+                            backgroundColor: petState.happiness > 70 ? '#ffeb3b' : petState.happiness > 40 ? '#ffc107' : '#ff5722'
+                        }"></div>
+                    </div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Усталость</div>
+                    <div class="status-value">{{ Math.max(0, Math.min(100, petState.energy)) }}%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" :style="{ 
+                            width: Math.max(0, Math.min(100, petState.energy)) + '%', 
+                            backgroundColor: petState.energy > 70 ? '#2196f3' : petState.energy > 40 ? '#03a9f4' : '#0288d1'
+                        }"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pet-container">
+                <div class="mood-indicator" :style="{ backgroundColor: moodColor }"></div>
+                <div class="pet" :class="['pet', petMood, petAction]">
+                    <div class="pet-head"></div>
+                    <div class="pet-body"></div>
+                    <div class="pet-tail"></div>
+                    <div class="pet-eye left">
+                        <div class="pet-pupil"></div>
+                    </div>
+                    <div class="pet-eye right">
+                        <div class="pet-pupil"></div>
+                    </div>
+                    <div class="pet-mouth"></div>
+                    <div class="pet-leg left"></div>
+                    <div class="pet-leg right"></div>
+                </div>
+                <div class="decoration"></div>
+                <div class="decoration"></div>
+                <div class="decoration"></div>
+                <div class="decoration"></div>
+                <div class="particles" id="particles">
+                    <div class="particle" v-for="(particle, index) in particles" :key="index" 
+                         :style="{ 
+                             left: particle.x + 'px', 
+                             top: particle.y + 'px', 
+                             width: particle.size + 'px', 
+                             height: particle.size + 'px', 
+                             backgroundColor: particle.color,
+                             opacity: particle.opacity
+                         }"></div>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="action-btn feed" @click="feedPet" :disabled="petState.food >= 100">
+                    <span>🍽️ Кормить</span>
+                </button>
+                <button class="action-btn play" @click="playWithPet" :disabled="petState.energy < 20">
+                    <span>⚽ Играть</span>
+                </button>
+                <button class="action-btn sleep" @click="putToSleep" :disabled="petState.energy >= 100">
+                    <span>💤 Спать</span>
+                </button>
+                <button class="action-btn clean" @click="cleanUp" :disabled="petState.happiness >= 100">
+                    <span>🧹 Убирать</span>
+                </button>
+            </div>
+
+            <div class="notification" :class="{ show: showingNotification }">{{ notificationText }}</div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, watch } = Vue;
+
+        createApp({
+            setup() {
+                // Состояние питомца
+                const petState = ref({
+                    food: 80,
+                    happiness: 75,
+                    energy: 60,
+                    lastUpdate: Date.now()
+                });
+
+                const petName = ref('Бобик');
+                const showingNotification = ref(false);
+                const notificationText = ref('');
+                const petAction = ref('');
+                const particles = ref([]);
+
+                // Вычисляемые свойства
+                const petMood = computed(() => {
+                    if (petState.value.food > 70 && petState.value.happiness > 70 && petState.value.energy > 70) {
+                        return 'pet-happy';
+                    } else if (petState.value.food < 30 || petState.value.happiness < 30 || petState.value.energy < 30) {
+                        return 'pet-sad';
+                    } else if (petState.value.energy < 30) {
+                        return 'pet-tired';
+                    } else {
+                        return '';
+                    }
+                });
+
+                const moodColor = computed(() => {
+                    if (petState.value.food > 70 && petState.value.happiness > 70 && petState.value.energy > 70) {
+                        return '#4caf50';
+                    } else if (petState.value.food < 30 || petState.value.happiness < 30 || petState.value.energy < 30) {
+                        return '#f44336';
+                    } else if (petState.value.energy < 30) {
+                        return '#9c27b0';
+                    } else {
+                        return '#ff9800';
+                    }
+                });
+
+                // Создание частиц
+                function createParticle(x, y, color = 'rgba(255, 255, 255, 0.8)') {
+                    const size = Math.random() * 8 + 2;
+                    const opacity = Math.random() * 0.7 + 0.3;
+                    
+                    particles.value.push({
+                        x: x,
+                        y: y,
+                        size: size,
+                        color: color,
+                        opacity: opacity,
+                        createdAt: Date.now()
+                    });
+                    
+                    // Удаляем старые частицы через 2 секунды
+                    setTimeout(() => {
+                        particles.value = particles.value.filter(p => p.createdAt !== Date.now());
+                    }, 2000);
+                }
+
+                // Показ уведомления
+                function showNotification(message) {
+                    notificationText.value = message;
+                    showingNotification.value = true;
+                    setTimeout(() => {
+                        showingNotification.value = false;
+                    }, 2000);
+                }
+
+                // Обработка действий с питомцем
+                function feedPet() {
+                    if (petState.value.food >= 100) {
+                        showNotification("Питомец уже сыт!");
+                        return;
+                    }
+                    
+                    petState.value.food = Math.min(100, petState.value.food + 25);
+                    petState.value.happiness = Math.min(100, petState.value.happiness + 10);
+                    petState.value.energy = Math.min(100, petState.value.energy + 5);
+                    petAction.value = 'pet-eating';
+                    
+                    showNotification("Питомец ест! Вкусно!");
+                    
+                    // Создаем частицы еды
+                    for (let i = 0; i < 15; i++) {
+                        const x = 200 + (Math.random() - 0.5) * 100;
+                        const y = 300 + (Math.random() - 0.5) * 100;
+                        createParticle(x, y, '#ffeb3b');
+                    }
+                    
+                    setTimeout(() => {
+                        petAction.value = '';
+                    }, 1000);
+                }
+
+                function playWithPet() {
+                    if (petState.value.energy < 20) {
+                        showNotification("Питомец слишком устал для игр!");
+                        return;
+                    }
+                    
+                    petState.value.happiness = Math.min(100, petState.value.happiness + 20);
+                    petState.value.food = Math.max(0, petState.value.food - 10);
+                    petState.value.energy = Math.max(0, petState.value.energy - 15);
+                    petAction.value = 'pet-playing';
+                    
+                    showNotification("Питомец играет! Как весело!");
+                    
+                    // Создаем частицы радости
+                    for (let i = 0; i < 20; i++) {
+                        const x = 200 + (Math.random() - 0.5) * 100;
+                        const y = 300 + (Math.random() - 0.5) * 100;
+                        createParticle(x, y, '#ffeb3b');
+                    }
+                    
+                    setTimeout(() => {
+                        petAction.value = '';
+                    }, 1000);
+                }
+
+                function putToSleep() {
+                    if (petState.value.energy >= 100) {
+                        showNotification("Питомец уже выспался!");
+                        return;
+                    }
+                    
+                    petState.value.energy = Math.min(100, petState.value.energy + 30);
+                    petState.value.happiness = Math.max(0, petState.value.happiness - 5);
+                    petState.value.food = Math.max(0, petState.value.food - 5);
+                    
+                    showNotification("Питомец спит... Закройте глазки...");
+                    
+                    // Создаем частицы сна
+                    for (let i = 0; i < 10; i++) {
+                        const x = 200 + (Math.random() - 0.5) * 100;
+                        const y = 300 + (Math.random() - 0.5) * 100;
+                        createParticle(x, y, '#9c27b0');
+                    }
+                }
+
+                function cleanUp() {
+                    if (petState.value.happiness >= 100) {
+                        showNotification("Питомец и так чистый!");
+                        return;
+                    }
+                    
+                    petState.value.happiness = Math.min(100, petState.value.happiness + 15);
+                    petState.value.food = Math.max(0, petState.value.food - 10);
+                    petState.value.energy = Math.max(0, petState.value.energy - 10);
+                    
+                    showNotification("Питомец теперь чистый и красивый!");
+                    
+                    // Создаем частицы чистоты
+                    for (let i = 0; i < 15; i++) {
+                        const x = 200 + (Math.random() - 0.5) * 100;
+                        const y = 300 + (Math.random() - 0.5) * 100;
+                        createParticle(x, y, '#4caf50');
+                    }
+                }
+
+                // Автоматическое снижение показателей
+                setInterval(() => {
+                    const now = Date.now();
+                    const elapsedSeconds = (now - petState.value.lastUpdate) / 1000;
+                    petState.value.lastUpdate = now;
+
+                    // Уменьшаем показатели со временем
+                    petState.value.food = Math.max(0, petState.value.food - elapsedSeconds * 0.05);
+                    petState.value.happiness = Math.max(0, petState.value.happiness - elapsedSeconds * 0.03);
+                    petState.value.energy = Math.max(0, petState.value.energy - elapsedSeconds * 0.02);
+
+                    // Если все показатели низкие, питомец грустит
+                    if (petState.value.food < 20 && petState.value.happiness < 20 && petState.value.energy < 20) {
+                        if (Math.random() < 0.1) {
+                            showNotification("Питомец хочет, чтобы вы его погладили...");
+                        }
+                    }
+                }, 100);
+
+                // Добавляем немного случайных частиц при загрузке
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.random() * 400;
+                    const y = Math.random() * 200;
+                    createParticle(x, y, 'rgba(255, 255, 255, 0.3)');
+                }
+
+                // Обработка клика по питомцу
+                const handlePetClick = () => {
+                    if (petMood.value === 'pet-happy') {
+                        petState.value.happiness = Math.min(100, petState.value.happiness + 5);
+                        showNotification("Питомец радует вас!");
+                        createParticle(200, 300, '#ffeb3b');
+                    } else if (petMood.value === 'pet-sad') {
+                        petState.value.happiness = Math.min(100, petState.value.happiness + 10);
+                        showNotification("Вы погладили питомца!");
+                        createParticle(200, 300, '#4caf50');
+                    } else {
+                        petState.value.happiness = Math.min(100, petState.value.happiness + 3);
+                        createParticle(200, 300, '#9c27b0');
+                    }
+                };
+
+                return {
+                    petState,
+                    petName,
+                    petMood,
+                    moodColor,
+                    petAction,
+                    particles,
+                    showingNotification,
+                    notificationText,
+                    feedPet,
+                    playWithPet,
+                    putToSleep,
+                    cleanUp,
+                    handlePetClick
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

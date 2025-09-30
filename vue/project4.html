@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список Продуктов</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            background: #1a202c;
+            color: #e5e7eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #81c784);
+            color: #1a202c;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 2rem;
+            color: #38bdf8;
+        }
+        p {
+            font-size: 1.2rem;
+        }
+        ul {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        li {
+            background: #e8f5e9;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+        }
+        .highlight {
+            background: #e8f5e9;
+            color: #1a202c;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Список Продуктов</h1>
+        <p>Что делает: Показывает список продуктов из массива.</p>
+        <p>Что демонстрирует: Итерацию с <code class="highlight">v-for</code> для создания списков.</p>
+        <div id="app">
+            <ul>
+                <li v-for="product in products" :key="product.id"> <!-- Итерация по массиву -->
+                    {{ product.name }} - {{ product.price }} руб.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Создаём приложение Vue
+        const { createApp } = Vue;
+        createApp({
+            // Данные приложения
+            data() {
+                return {
+                    products: [ // Массив объектов
+                        { id: 1, name: 'Яблоко', price: 100 },
+                        { id: 2, name: 'Банан', price: 150 },
+                        { id: 3, name: 'Апельсин', price: 200 }
+                    ]
+                };
+            }
+        }).mount('#app'); // Привязываем Vue к элементу с id="app"
+    </script>
+</body>
+</html>

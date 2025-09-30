@@ -1,0 +1,136 @@
+:root {
+  --main-bg: #f4f6fb;
+  --header-bg: #2d3a4b;
+  --accent: #4f8cff;
+  --card-bg: #f9fafc;
+  --skill-bg: #e3eaf2;
+  --text: #222;
+  --white: #fff;
+}
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  background: var(--main-bg);
+  color: var(--text);
+  transition: background 0.3s;
+}
+
+header {
+  background: var(--header-bg);
+  color: var(--white);
+  padding: 2rem 0 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 2px 8px #0002;
+  position: relative;
+}
+
+header img.avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--accent);
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px #0003;
+  background: var(--white);
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 4px 16px #0001;
+  padding: 2rem;
+  animation: fadeIn 1s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+h1, h2 {
+  margin-top: 0;
+  letter-spacing: 1px;
+}
+
+.about {
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.projects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.project {
+  background: var(--card-bg);
+  padding: 1.2rem 1rem;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px #0001;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #eaeaea;
+  position: relative;
+}
+
+.project:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 6px 24px #4f8cff22;
+  border-color: var(--accent);
+}
+
+.project a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.2s;
+}
+
+.project a:hover {
+  color: #1a5edb;
+  text-decoration: underline;
+}
+
+.skills {
+  margin: 2rem 0;
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.skill {
+  background: var(--skill-bg);
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 1px 4px #0001;
+  transition: background 0.2s, color 0.2s;
+}
+
+.skill:hover {
+  background: var(--accent);
+  color: var(--white);
+}
+
+section {
+  margin-bottom: 1.5rem;
+}
+
+a {
+  transition: color 0.2s;
+}
+
+@media (max-width: 700px) {
+  .container { padding: 1rem; }
+  .projects { grid-template-columns: 1fr; }
+  header { padding: 1.2rem 0 1rem 0; }
+}

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Глоссарий веб-разработчика</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+            max-width: 500px;
+            margin: 0 auto 25px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus {
+            border-color: #6e8efb;
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .category-btn.active, .category-btn:hover {
+            background-color: #6e8efb;
+            color: white;
+        }
+        
+        .glossary {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .term-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            border-left: 4px solid #6e8efb;
+        }
+        
+        .term-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .term-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .term-category {
+            background-color: #e0e7ff;
+            color: #6e8efb;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .term-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .term-example {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            border-left: 3px solid #6e8efb;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            grid-column: 1 / -1;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        @media (max-width: 768px) {
+            .glossary {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <header>
+                <h1><i class="fas fa-book"></i> Глоссарий веб-разработчика</h1>
+                <p>Основные теги и элементы HTML, CSS, JavaScript и Vue.js</p>
+                
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        placeholder="Поиск по терминам..." 
+                        v-model="searchQuery"
+                    >
+                </div>
+                
+                <div class="categories">
+                    <button 
+                        v-for="category in categories" 
+                        :key="category" 
+                        :class="['category-btn', { active: selectedCategory === category }]"
+                        @click="toggleCategory(category)"
+                    >
+                        {{ category }}
+                    </button>
+                </div>
+            </header>
+            
+            <div class="glossary">
+                <div 
+                    v-for="term in filteredTerms" 
+                    :key="term.name" 
+                    class="term-card"
+                >
+                    <div class="term-header">
+                        <h3 class="term-name">{{ term.name }}</h3>
+                        <span class="term-category">{{ term.category }}</span>
+                    </div>
+                    <p class="term-description">{{ term.description }}</p>
+                    <div class="term-example" v-if="term.example">
+                        {{ term.example }}
+                    </div>
+                </div>
+                
+                <div class="empty-state" v-if="filteredTerms.length === 0">
+                    <i class="fas fa-search"></i>
+                    <h3>Ничего не найдено</h3>
+                    <p>Попробуйте изменить поисковый запрос или выбрать другую категорию</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                searchQuery: '',
+                selectedCategory: 'Все',
+                categories: ['Все', 'HTML', 'CSS', 'JavaScript', 'Vue.js', 'Общее' , 'Инструменты', 'Вёрстка'],
+                terms: [
+                    {
+    name: '<head>',
+    category: 'HTML',
+    description: 'Секция документа для метаданных (заголовок, кодировка, стили, скрипты и др.). Не отображается на странице.',
+    example: '<head>\n  <meta charset="UTF-8">\n  <title>Заголовок</title>\n</head>'
+},
+{
+    name: '<meta>',
+    category: 'HTML',
+    description: 'Тег для хранения метаданных о странице (кодировка, описание, viewport и др.).',
+    example: '<meta charset="UTF-8">'
+},
+{
+    name: '<link>',
+    category: 'HTML',
+    description: 'Тег для подключения внешних ресурсов, например, CSS-стилей или иконки сайта.',
+    example: '<link rel="stylesheet" href="styles.css">'
+},
+
+{
+    name: '<br>',
+    category: 'HTML',
+    description: 'Тег для вставки разрыва строки (перевода строки) в тексте.',
+    example: 'Первая строка<br>Вторая строка'
+},
+{
+    name: '<hr>',
+    category: 'HTML',
+    description: 'Тег для вставки горизонтальной линии-разделителя.',
+    example: '<hr>'
+},
+{
+    name: '<strong>',
+    category: 'HTML',
+    description: 'Тег для выделения текста жирным шрифтом, акцентирует важность.',
+    example: '<strong>Важный текст</strong>'
+},
+{
+    name: '<em>',
+    category: 'HTML',
+    description: 'Тег для выделения текста курсивом, акцентирует внимание.',
+    example: '<em>Выделенный текст</em>'
+},
+{
+    name: '<table>',
+    category: 'HTML',
+    description: 'Тег для создания таблицы.',
+    example: '<table>\n  <tr>\n    <td>Ячейка 1</td>\n    <td>Ячейка 2</td>\n  </tr>\n</table>'
+},
+{
+    name: '<tr>',
+    category: 'HTML',
+    description: 'Тег для создания строки в таблице.',
+    example: '<tr>\n  <td>Ячейка 1</td>\n  <td>Ячейка 2</td>\n</tr>'
+},
+{
+    name: '<td>',
+    category: 'HTML',
+    description: 'Тег для создания обычной ячейки таблицы.',
+    example: '<td>Содержимое ячейки</td>'
+},
+{
+    name: '<th>',
+    category: 'HTML',
+    description: 'Тег для создания заголовочной ячейки таблицы.',
+    example: '<th>Заголовок</th>'
+},
+{
+    name: '<header>',
+    category: 'HTML',
+    description: 'Семантический тег для обозначения шапки страницы или раздела.',
+    example: '<header>\n  <h1>Заголовок сайта</h1>\n</header>'
+},
+{
+    name: '<footer>',
+    category: 'HTML',
+    description: 'Семантический тег для нижней части страницы или раздела.',
+    example: '<footer>\n  <p>© 2025 Все права защищены</p>\n</footer>'
+},
+{
+    name: '<main>',
+    category: 'HTML',
+    description: 'Семантический тег для основного содержимого страницы.',
+    example: '<main>\n  <h2>Основной контент</h2>\n</main>'
+},
+{
+    name: '<nav>',
+    category: 'HTML',
+    description: 'Семантический тег для навигационного меню.',
+    example: '<nav>\n  <a href="/">Главная</a>\n  <a href="/about">О нас</a>\n</nav>'
+},
+{
+    name: '<section>',
+    category: 'HTML',
+    description: 'Семантический тег для раздела страницы.',
+    example: '<section>\n  <h2>Раздел</h2>\n  <p>Описание раздела</p>\n</section>'
+},
+{
+    name: '<article>',
+    category: 'HTML',
+    description: 'Семантический тег для самостоятельного содержимого (статья, пост, новость).',
+    example: '<article>\n  <h2>Новость</h2>\n  <p>Текст новости</p>\n</article>'
+},
+{
+    name: '<aside>',
+    category: 'HTML',
+    description: 'Семантический тег для дополнительной информации (боковая панель, реклама).',
+    example: '<aside>\n  <p>Боковая информация</p>\n</aside>'
+},
+{
+    name: '<iframe>',
+    category: 'HTML',
+    description: 'Тег для встраивания другого HTML-документа на страницу.',
+    example: '<iframe src="https://example.com"></iframe>'
+},
+{
+    name: '<audio>',
+    category: 'HTML',
+    description: 'Тег для вставки аудиоплеера.',
+    example: '<audio controls>\n  <source src="audio.mp3" type="audio/mpeg">\n</audio>'
+},
+{
+    name: '<video>',
+    category: 'HTML',
+    description: 'Тег для вставки видеоплеера.',
+    example: '<video controls width="320">\n  <source src="video.mp4" type="video/mp4">\n</video>'
+},
+{
+    name: '<figure>',
+    category: 'HTML',
+    description: 'Тег для группировки иллюстрации и подписи к ней.',
+    example: '<figure>\n  <img src="cat.jpg" alt="Кот">\n  <figcaption>Мой кот</figcaption>\n</figure>'
+},
+{
+    name: '<figcaption>',
+    category: 'HTML',
+    description: 'Тег для подписи к иллюстрации внутри <figure>.',
+    example: '<figcaption>Описание изображения</figcaption>'
+},
+{
+    name: '<input type="checkbox">',
+    category: 'HTML',
+    description: 'Поле формы для выбора одного или нескольких вариантов (чекбокс).',
+    example: '<input type="checkbox" checked> Я согласен'
+},
+{
+    name: '<input type="radio">',
+    category: 'HTML',
+    description: 'Поле формы для выбора одного варианта из группы (радиокнопка).',
+    example: '<input type="radio" name="gender" value="male"> Мужчина' 
+},
+                    {
+                        name: '<div>',
+                        category: 'HTML',
+                        description: 'Блочный контейнер для группировки элементов. Используется для структурирования страницы.',
+                        example: '<div>Это блочный контейнер</div>'
+                    },
+
+                    {
+                        name: '<span>',
+                        category: 'HTML',
+                        description: 'Строчный контейнер для выделения части текста или группировки строчных элементов.',
+                        example: '<p>Это <span style="color: red;">красный</span> текст</p>'
+                    },
+                    {
+                        name: '<ul>',
+                        category: 'HTML',
+                        description: 'Список неупорядоченных элементов.',
+                        example: '<ul>\n  <li>Элемент 1</li>\n  <li>Элемент 2</li>\n</ul>'
+                    },
+                    {
+                        name: '<li>',
+                        category: 'HTML',
+                        description: 'Элемент списка.',
+                        example: '<ul>\n  <li>Элемент 1</li>\n  <li>Элемент 2</li>\n</ul>'
+                    },
+                    {
+                        name: '<h1>',
+                        category: 'HTML',
+                        description: 'Заголовок первого уровня.',
+                        example: '<h1>Заголовок первого уровня</h1>'
+                    },
+                    {
+                        name: '<p>',
+                        category: 'HTML',
+                        description: 'Параграф текста.',
+                        example: '<p>Это пример параграфа.</p>'
+                    },
+                    {
+                        name: '<img>',
+                        category: 'HTML',
+                        description: 'Добавляет изображение на страницу.',
+                        example: '<img src="https://example.com/image.jpg" alt="Пример изображения">'
+                    },
+                    {
+                        name: '<button>',
+                        category: 'HTML',
+                        description: 'Кнопка, которая может быть нажата пользователем.',
+                        example: '<button>Нажми меня!</button>'
+                    },
+                    {
+                        name: '<form>',
+                        category: 'HTML',
+                        description: 'Форма для ввода данных пользователем.',
+                        example: '<form>\n  <input type="text" placeholder="Введите имя">\n  <button type="submit">Отправить</button>\n</form>'
+                    },
+                    {
+                        name: '<label>',
+                        category: 'HTML',
+                        description: 'Элемент метки, связанный с элементом формы.',
+                        example: '<label for="name">Имя:</label>\n<input type="text" id="name">'
+                    },
+                    {
+                        name: '<select>',
+                        category: 'HTML',
+                        description: 'Элемент для выбора одного или нескольких опций из списка.',
+                        example: '<select>\n  <option value="option1">Опция 1</option>\n  <option value="option2">Опция 2</option>\n</select>'
+                    },
+                    {
+                        name: '<option>',
+                        category: 'HTML',
+                        description: 'Опция в списке.',
+                        example: '<select>\n  <option value="option1">Опция 1</option>\n  <option value="option2">Опция 2</option>\n</select>'
+                    },
+                    {
+                        name: '<textarea>',
+                        category: 'HTML',
+                        description: 'Поле для ввода большого текста.',
+                        example: '<textarea placeholder="Введите текст"></textarea>'
+                    },
+
+                    
+                    {
+                        name: '<a>',
+                        category: 'HTML',
+                        description: 'Создает гиперссылку для перехода на другую страницу или ресурс.',
+                        example: '<a href="https://example.com">Пример ссылки</a>'
+                    },
+                    {
+                        name: '<input>',
+                        category: 'HTML',
+                        description: 'Поле для ввода данных пользователем. Может быть разных типов (text, password, email и т.д.).',
+                        example: '<input type="text" placeholder="Введите имя">'
+                    },
+                    {
+    name: 'border',
+    category: 'CSS',
+    description: 'Свойство для задания рамки вокруг элемента. Позволяет указать ширину, стиль и цвет рамки.',
+    example: 'border: 2px solid #333;'
+},
+{
+    name: 'overflow',
+    category: 'CSS',
+    description: 'Свойство для управления отображением содержимого, выходящего за пределы блока.',
+    example: 'overflow: auto;'
+},
+{
+    name: 'position',
+    category: 'CSS',
+    description: 'Свойство для задания способа позиционирования элемента (static, relative, absolute, fixed, sticky).',
+    example: 'position: absolute;'
+},
+{
+    name: 'z-index',
+    category: 'CSS',
+    description: 'Свойство для управления порядком наложения элементов по оси Z (вперёд/назад). Работает с position отличным от static.',
+    example: 'z-index: 10;'
+},
+{
+    name: 'cursor',
+    category: 'CSS',
+    description: 'Свойство для задания вида курсора при наведении на элемент.',
+    example: 'cursor: pointer;'
+},
+{
+    name: 'opacity',
+    category: 'CSS',
+    description: 'Свойство для задания прозрачности элемента (от 0 до 1).',
+    example: 'opacity: 0.5;'
+},
+{
+    name: ':hover',
+    category: 'CSS',
+    description: 'Псевдокласс для задания стилей при наведении курсора на элемент.',
+    example: 'button:hover {\n  background: #6e8efb;\n}'
+},
+{
+    name: ':active',
+    category: 'CSS',
+    description: 'Псевдокласс для задания стилей активного (нажатого) элемента.',
+    example: 'button:active {\n  transform: scale(0.98);\n}'
+},
+{
+    name: ':focus',
+    category: 'CSS',
+    description: 'Псевдокласс для задания стилей элемента, находящегося в фокусе (например, при вводе в поле).',
+    example: 'input:focus {\n  border-color: #a777e3;\n}'
+},
+                    {
+                        name: 'margin',
+                        category: 'CSS',
+                        description: 'Свойство определяет внешний отступ элемента от других элементов.',
+                        example: 'margin: 10px;'
+                    },
+                    {
+                        name: 'padding',
+                        category: 'CSS',
+                        description: 'Свойство определяет внутренний отступ элемента от его содержимого.',
+                        example: 'padding: 15px;'
+                    },
+                    {
+                        name: 'background',
+                        category: 'CSS',
+                        description: 'Свойство определяет фоновый цвет элемента.',
+                        example: 'background: #f0f0f0;'
+                    },
+                    {
+                        name: 'color',
+                        category: 'CSS',
+                        description: 'Свойство определяет цвет текста элемента.',
+                        example: 'color: #ff0000;'
+                    },
+                    {
+                        name: 'font-size',
+                        category: 'CSS',
+                        description: 'Свойство определяет размер шрифта элемента.',
+                        example: 'font-size: 16px;'
+                    },
+                    {
+                        name: 'font-weight',
+                        category: 'CSS',
+                        description: 'Свойство определяет толщину шрифта элемента.',
+                        example: 'font-weight: bold;'
+                    },
+                    {
+                        name: 'text-align',
+                        category: 'CSS',
+                        description: 'Свойство определяет выравнивание текста элемента.',
+                        example: 'text-align: center;'
+                    },
+                    {
+                        name: 'box-shadow',
+                        category: 'CSS',
+                        description: 'Свойство определяет тень для элемента.',
+                        example: 'box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);'
+                    },
+                    {
+                        name: 'transition',
+                        category: 'CSS',
+                        description: 'Свойство для создания плавных переходов между состояниями элемента.',
+                        example: 'transition: all 0.3s ease;'
+                    },
+                    {
+                        name: 'grid',
+                        category: 'CSS',
+                        description: 'Двумерная система макета для создания сложных responsive layouts.',
+                        example: 'display: grid;\ngrid-template-columns: 1fr 1fr;'
+                    },
+
+                    {
+                        name: 'display',
+                        category: 'CSS',
+                        description: 'Свойство определяет тип отображения элемента (блочный, строчный, flex и т.д.).',
+                        example: 'display: flex;'
+                    },
+                    {
+                        name: 'flexbox',
+                        category: 'CSS',
+                        description: 'Модель макета для эффективного распределения пространства и выравнивания элементов.',
+                        example: 'display: flex;\njustify-content: center;\nalign-items: center;'
+                    },
+                    {
+    name: 'let',
+    category: 'JavaScript',
+    description: 'Объявление переменной с блочной областью видимости. Предпочтительнее var в современном JS.',
+    example: 'let count = 0;'
+},
+{
+    name: 'var',
+    category: 'JavaScript',
+    description: 'Объявление переменной с функциональной или глобальной областью видимости.',
+    example: 'var count = 0;'
+},
+{
+    name: 'const',
+    category: 'JavaScript',
+    description: 'Объявление константы, значение которой нельзя изменить после инициализации.',
+    example: 'const PI = 3.14;'
+},
+{
+    name: 'for',
+    category: 'JavaScript',
+    description: 'Цикл для итерации по массиву или строке.',
+    example: 'for (let i = 0; i < array.length; i++) {\n  console.log(array[i]);\n}'
+},
+{
+    name: 'if',
+    category: 'JavaScript',
+    description: 'Условный оператор, который выполняет блок кода, если условие истинно.',
+    example: 'if (condition) {\n  console.log("Condition is true");\n}'
+},
+{
+    name: 'else',
+    category: 'JavaScript',
+    description: 'Оператор, который выполняет блок кода, если условие в if ложно.',
+    example: 'if (condition) {\n  // ...\n} else {\n  // ...\n}'
+},
+{
+    name: 'array',
+    category: 'JavaScript',
+    description: 'Структура данных для хранения упорядоченного списка значений.',
+    example: 'let fruits = ["apple", "banana", "cherry"];'
+},
+{
+    name: 'object',
+    category: 'JavaScript',
+    description: 'Структура данных для хранения пар ключ-значение.',
+    example: 'let person = { name: "John", age: 30 };'
+},
+{
+    name: 'function',
+    category: 'JavaScript',
+    description: 'Объявление функции — блока кода, который можно вызывать многократно.',
+    example: 'function greet(name) {\n  return "Hello, " + name;\n}'
+},
+{
+    name: 'this',
+    category: 'JavaScript',
+    description: 'Ключевое слово, которое ссылается на текущий объект в контексте функции.',
+    example: 'function greet() {\n  console.log("Hello, " + this.name);\n}'
+},
+{
+    name: 'class',
+    category: 'JavaScript',
+    description: 'Объявление класса для создания объектов с общими свойствами и методами.',
+    example: 'class Person {\n  constructor(name) {\n    this.name = name;\n  }\n}'
+},
+{
+    name: 'map',
+    category: 'JavaScript',
+    description: 'Метод массива для создания нового массива с результатом вызова функции для каждого элемента.',
+    example: 'let doubled = numbers.map(n => n * 2);'
+},
+{
+    name: 'filter',
+    category: 'JavaScript',
+    description: 'Метод массива для создания нового массива только с элементами, прошедшими проверку.',
+    example: 'let even = numbers.filter(n => n % 2 === 0);'
+},
+{
+    name: 'reduce',
+    category: 'JavaScript',
+    description: 'Метод массива для последовательной обработки каждого элемента с накоплением результата.',
+    example: 'let sum = numbers.reduce((acc, n) => acc + n, 0);'
+},
+{
+    name: 'addEventListener',
+    category: 'JavaScript',
+    description: 'Метод для добавления обработчика события к элементу.',
+    example: 'button.addEventListener("click", function() {\n  alert("Clicked!");\n});'
+},
+{
+    name: 'setTimeout',
+    category: 'JavaScript',
+    description: 'Функция для выполнения кода с задержкой.',
+    example: 'setTimeout(() => {\n  console.log("Через 1 секунду");\n}, 1000);'
+},
+{
+    name: 'setInterval',
+    category: 'JavaScript',
+    description: 'Функция для периодического выполнения кода через заданный интервал времени.',
+    example: 'setInterval(() => {\n  console.log("Каждую секунду");\n}, 1000);'
+},
+{
+    name: 'typeof',
+    category: 'JavaScript',
+    description: 'Оператор для определения типа значения.',
+    example: 'typeof "hello"; // "string"'
+},
+{
+    name: 'null',
+    category: 'JavaScript',
+    description: 'Специальное значение, обозначающее "ничего" или "пусто".',
+    example: 'let value = null;'
+},
+{
+    name: 'undefined',
+    category: 'JavaScript',
+    description: 'Значение переменной, которой не было присвоено значение.',
+    example: 'let value;\nconsole.log(value); // undefined'
+},
+{
+    name: 'NaN',
+    category: 'JavaScript',
+    description: 'Специальное значение "Not-a-Number", результат некорректной математической операции.',
+    example: 'let result = 0 / 0; // NaN'
+},
+{
+    name: 'parseInt',
+    category: 'JavaScript',
+    description: 'Функция для преобразования строки в целое число.',
+    example: 'parseInt("42"); // 42'
+},
+{
+    name: 'parseFloat',
+    category: 'JavaScript',
+    description: 'Функция для преобразования строки в число с плавающей точкой.',
+    example: 'parseFloat("3.14"); // 3.14'
+},
+{
+    name: 'JSON',
+    category: 'JavaScript',
+    description: 'Глобальный объект для работы с форматом обмена данными JSON.',
+    example: 'JSON.parse(\'{"name":"John"}\');'
+},
+{
+    name: 'localStorage',
+    category: 'JavaScript',
+    description: 'API браузера для хранения данных в локальном хранилище.',
+    example: 'localStorage.setItem("key", "value");'
+},
+{
+    name: 'sessionStorage',
+    category: 'JavaScript',
+    description: 'API браузера для хранения данных на время сессии.',
+    example: 'sessionStorage.setItem("key", "value");'
+},
+                    {
+                        name: 'v-model',
+                        category: 'Vue.js',
+                        description: 'Директива для двустороннего связывания данных с элементами форм.',
+                        example: '<input v-model="message">'
+                    },
+                    {
+                        name: 'v-bind',
+                        category: 'Vue.js',
+                        description: 'Директива для одностороннего связывания данных с атрибутами элементов.',
+                        example: '<a v-bind:href="url">Ссылка</a>'
+                    },
+                    {
+                        name: 'v-if',
+                        category: 'Vue.js',
+                        description: 'Директива для условного отображения элемента в зависимости от условия.',
+                        example: '<p v-if="isVisible">Видимый текст</p>'
+                    },
+                    {
+                        name: 'computed',
+                        category: 'Vue.js',
+                        description: 'Свойства, которые вычисляются на основе других данных и кэшируются до изменения зависимостей.',
+                        example: 'computed: {\n  fullName() {\n    return this.firstName + " " + this.lastName;\n  }\n}'
+                    },
+                    {
+                        name: '<template>',
+                        category: 'Vue.js',
+                        description: 'Специальный тег для группировки элементов без создания дополнительного DOM-узла.',
+                        example: '<template>\n  <div>Группа</div>\n  <p>элементов</p>\n</template>'
+                    },
+                    {
+                        name: 'v-for',
+                        category: 'Vue.js',
+                        description: 'Директива для отображения списка элементов на основе массива данных.',
+                        example: '<li v-for="item in items" :key="item.id">{{ item.name }}</li>'
+                    },
+                    {
+                        name: 'methods',
+                        category: 'Vue.js',
+                        description: 'Объект для определения методов, которые можно вызывать из шаблона или других методов.',
+                        example: 'methods: {\n  sayHello() {\n    alert("Hello!");\n  }\n}'
+                    },
+                    {
+                        name: 'transition',
+                        category: 'CSS',
+                        description: 'Свойство для создания плавных переходов между состояниями элемента.',
+                        example: 'transition: all 0.3s ease;'
+                    },
+                    {
+                        name: 'grid',
+                        category: 'CSS',
+                        description: 'Двумерная система макета для создания сложных responsive layouts.',
+                        example: 'display: grid;\ngrid-template-columns: 1fr 1fr;'
+                    },
+                    {
+                        name: 'async/await',
+                        category: 'JavaScript',
+                        description: 'Синтаксис для работы с асинхронными операциями в более читаемом стиле.',
+                        example: 'async function fetchData() {\n  const response = await fetch(url);\n  return response.json();\n}'
+                    },
+                    {
+                        name: 'component',
+                        category: 'Vue.js',
+                        description: 'Переиспользуемый экземпляр Vue с собственным шаблоном, логикой и стилями.',
+                        example: 'Vue.component("my-component", {\n  template: "<div>Мой компонент</div>"\n});'
+                    },
+                    {
+    name: 'props',
+    category: 'Vue.js',
+    description: 'Входные параметры, которые компонент принимает от родителя для передачи данных.',
+    example: 'props: ["title", "value"]'
+},
+{
+    name: 'data',
+    category: 'Vue.js',
+    description: 'Функция, возвращающая объект с локальными данными компонента.',
+    example: 'data() {\n  return {\n    count: 0\n  };\n}'
+},
+{
+    name: 'watch',
+    category: 'Vue.js',
+    description: 'Объект для отслеживания изменений определённых данных и выполнения действий при их изменении.',
+    example: 'watch: {\n  value(newVal, oldVal) {\n    console.log(newVal);\n  }\n}'
+},
+{
+    name: 'lifecycle hooks',
+    category: 'Vue.js',
+    description: 'Методы жизненного цикла компонента, которые вызываются на разных этапах его существования (created, mounted, updated, destroyed и др.).',
+    example: 'created() {\n  console.log("Компонент создан");\n}\nmounted() {\n  console.log("Компонент добавлен в DOM");\n}'
+},
+                    {
+    name: 'Git',
+    category: 'Инструменты',
+    description: 'Система контроля версий для отслеживания изменений в коде и совместной работы над проектами.',
+    example: 'git commit -m "Добавил новую функцию"'
+},
+{
+    name: 'npm',
+    category: 'Инструменты',
+    description: 'Менеджер пакетов для JavaScript, используемый для установки библиотек и управления зависимостями.',
+    example: 'npm install vue'
+},
+{
+    name: 'yarn',
+    category: 'Инструменты',
+    description: 'Альтернативный менеджер пакетов для JavaScript, похожий на npm.',
+    example: 'yarn add axios'
+},
+{
+    name: 'Responsive design',
+    category: 'Вёрстка',
+    description: 'Подход к созданию сайтов, при котором их внешний вид и функциональность адаптируются под разные устройства и экраны.',
+    example: '@media (max-width: 600px) {\n  body { font-size: 14px; }\n}'
+},
+{
+    name: 'API',
+    category: 'Общее',
+    description: 'Интерфейс для взаимодействия между программами или компонентами, определяющий способы их связи.',
+    example: 'fetch("https://api.example.com/data")'
+},
+{
+    name: 'REST',
+    category: 'Общее',
+    description: 'Архитектурный стиль для построения API, основанный на использовании стандартных HTTP-методов.',
+    example: 'GET /users\nPOST /users'
+},
+{
+    name: 'HTTP',
+    category: 'Общее',
+    description: 'Протокол передачи данных между клиентом и сервером в интернете.',
+    example: 'http://example.com'
+},
+{
+    name: 'JSON',
+    category: 'Общее',
+    description: 'Формат обмена данными между клиентом и сервером, основанный на JavaScript-объектах.',
+    example: '{"name": "John", "age": 30}'
+}
+
+                ]
+            },
+            computed: {
+                filteredTerms() {
+                    let filtered = this.terms;
+                    
+                    // Фильтрация по категории
+                    if (this.selectedCategory !== 'Все') {
+                        filtered = filtered.filter(term => term.category === this.selectedCategory);
+                    }
+                    
+                    // Фильтрация по поисковому запросу
+                    if (this.searchQuery) {
+                        const query = this.searchQuery.toLowerCase();
+                        filtered = filtered.filter(term => 
+                            term.name.toLowerCase().includes(query) ||
+                            term.description.toLowerCase().includes(query) ||
+                            term.category.toLowerCase().includes(query)
+                        );
+                    }
+                    
+                    return filtered;
+                }
+            },
+            methods: {
+                toggleCategory(category) {
+                    this.selectedCategory = this.selectedCategory === category ? 'Все' : category;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
