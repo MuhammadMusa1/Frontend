@@ -3,75 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мои проекты и контакты</title>
-    <style>
-        section {
-            padding: 20px;
-        }
-        form {
-            margin-top: 20px;
-        }
-        div {
-            margin-bottom: 15px;
-        }
-    </style>
+    <title>Ashurova Nozanin - Портфолио</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="app">
+        <!-- О себе -->
+        <section id="about" class="section">
+            <div class="container">
+                <h1>{{ name }}</h1>
+                <h2>{{ profession }}</h2>
+                <p class="about-text">{{ about }}</p>
+                
+                <div class="personal-info">
+                    <h3>Личная информация:</h3>
+                    <ul>
+                        <li><strong>Возраст:</strong> 16 лет</li>
+                        <li><strong>Национальность:</strong> Tajik</li>
+                        <li><strong>Школа:</strong> KKH</li>
+                        <li><strong>Клуб:</strong> IT club</li>
+                        <li><strong>Языки:</strong> Tajik, Russian, English</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
 
-<section id="projects">
-<h1>О себе</h1>
-<ul>
-    <li>Ashurova Nozanin</li>
-    <li> 16y/o</li>
-    <li>tajik</li>
-    <li>school:KKH</li>
-    <li>IT club </li>
-    <li>Languages:Tajik, Russian, English</li>
-</ul>
-    <h2>Мои проекты</h2>
-    <ul>
-        <li>
-            <p>Проект 1: Веб-сайт для небольшого бизнеса. Этот проект включает создание полноценного сайта с адаптивным дизайном.</p>
-            <a href="https://example.com/project1" target="_blank">Ссылка на проект</a>
-        </li>
-        <li>
-            <p>Проект 2: Приложение для  задач. Приложение поможет пользователям организовывать свои планы и эффективно планировать время.</p>
-            <a href="https://example.com/project2" target="_blank">Ссылка на проект</a>
-        </li>
-        <li>
-            <p>Проект 3: Мини чат-бот</p>
-            <a href="https://example.com/project3" target="_blank">Ссылка на проект</a>
-        </li>
-    </ul>
-</section>
+        <!-- Проекты -->
+        <section id="projects" class="section">
+            <div class="container">
+                <h2>Мои проекты</h2>
+                <div class="projects-grid">
+                    <div v-for="project in projects" :key="project.id" class="project-card">
+                        <img :src="project.image" :alt="project.title" class="project-image">
+                        <div class="project-content">
+                            <h3>{{ project.title }}</h3>
+                            <p>{{ project.description }}</p>
+                            <a :href="project.url" target="_blank" class="project-link">Ссылка на проект</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<section id="contact">
-    <h2>Контакты</h2>
-    <form>
-        <div>
-            <label for="name">Имя:</label>
-            <input type="text" id="name" name="name" required>
+        <!-- Контакты -->
+        <section id="contact" class="section">
+            <div class="container">
+                <h2>Контакты</h2>
+                
+                <form @submit.prevent="submitForm" class="contact-form">
+                    <div class="form-group">
+                        <label for="name">Имя:</label>
+                        <input type="text" id="name" v-model="form.name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" v-model="form.email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Сообщение:</label>
+                        <textarea id="message" v-model="form.message" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">Отправить</button>
+                </form>
 
-        </div>
-    
-        <div>
-            <label for="message">Сообщение:</label>
-            <textarea id="message" name="message" required></textarea>
-        </div>
-        <button type="submit">Отправить</button>
-    </form>
-    <p>
-        <a href="mailto:your.email@example.com"> Email</a> |
-        <a href="https://t.me/yourusername" target="_blank">Telegram</a>
-    </p>
-</section>
+                <div class="contact-links">
+                    <p>Свяжитесь со мной:</p>
+                    <div class="links">
+                        <a :href="'mailto:' + contacts.email" class="contact-link">📧 Email</a>
+                        <a :href="contacts.github" target="_blank" class="contact-link">💻 GitHub</a>
+                        <a :href="contacts.telegram" target="_blank" class="contact-link">✈️ Telegram</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-<footer>
-    <i>© 2025  Nozanin</i>
-</footer>
+        <footer>
+            <div class="container">
+                <p><i>© 2025 Ashurova Nozanin</i></p>
+            </div>
+        </footer>
+    </div>
 
-
-<script src="app.js"></script>
-
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

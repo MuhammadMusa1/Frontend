@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToDo Vue.js</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="todoApp">
+      <h2>ToDo Список (Vue.js)</h2>
+      <form @submit.prevent="addTodo">
+        <input type="text" v-model="newTodo" placeholder="Новая задача" required />
+        <button type="submit">Добавить</button>
+      </form>
+      
+      <div class="todo-stats" v-if="todos.length > 0">
+        <span>Всего: {{ todos.length }}</span>
+        <span>Выполнено: {{ completedCount }}</span>
+      </div>
+      
+      <ul>
+        <li v-for="(todo, index) in todos" :key="index" :class="{completed: todo.completed}">
+          <span @click="toggleComplete(index)">{{ todo.text }}</span>
+          <button class="deleteBtn" @click="deleteTodo(index)">Удалить</button>
+        </li>
+      </ul>
+      
+      <div class="empty-state" v-if="todos.length === 0">
+        <p>📝 Список задач пуст</p>
+        <p>Добавьте первую задачу выше</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vue.js CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
