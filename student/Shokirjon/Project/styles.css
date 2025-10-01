@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.input-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+#wish-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+#wish-input:focus {
+    border-color: #007bff;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.wish-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.wish-card {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    cursor: move;
+    transition: transform 0.2s;
+}
+
+.wish-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.wish-card.completed {
+    background-color: #d4edda;
+    border: 1px solid #28a745;
+}
+
+.wish-card p {
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+}
+
+.wish-card .actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.wish-card button {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.wish-card .complete-btn {
+    background-color: #28a745;
+}
+
+.wish-card .complete-btn:hover {
+    background-color: #218838;
+}
+
+.wish-card .edit-btn {
+    background-color: #ffc107;
+}
+
+.wish-card .edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.wish-card .delete-btn {
+    background-color: #dc3545;
+}
+
+.wish-card .delete-btn:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 600px) {
+    .wish-board {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
