@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детальный Справочник по Java</title>
+    <!-- Prism.js CSS для подсветки кода (тема по умолчанию) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <!-- Опционально: темная тема Prism -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" id="prism-theme">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #1e1e1e;
+            color: #ddd;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode header {
+            background-color: #0056b3;
+            color: #eee;
+        }
+        nav {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        body.dark-mode nav {
+            background-color: #222;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        #search {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        body.dark-mode #search {
+            background-color: #333;
+            color: #ddd;
+            border-color: #555;
+        }
+        section {
+            display: none;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: background-color 0.3s;
+        }
+        body.dark-mode section {
+            background-color: #2c2c2c;
+        }
+        section.active {
+            display: block;
+        }
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        body.dark-mode h2 {
+            color: #4da6ff;
+            border-bottom-color: #444;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+            transition: background-color 0.3s;
+        }
+        body.dark-mode pre {
+            background-color: #333;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 4px;
+            border-radius: 3px;
+            transition: background-color 0.3s;
+        }
+        body.dark-mode code {
+            background-color: #444;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .example {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+            transition: color 0.3s;
+        }
+        body.dark-mode .example {
+            color: #aaa;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            margin-top: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode footer {
+            background-color: #222;
+        }
+        #mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+        body.dark-mode #mode-toggle {
+            background-color: #333;
+            color: #ddd;
+            border-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Детальный Справочник по Java</h1>
+        <p>Полный гид по основам, ООП, коллекциям, исключениям и многому другому. С примерами кода и объяснениями. Теперь с подсветкой кода (Prism.js), темным режимом и дополнительными разделами.</p>
+    </header>
+    
+    <nav>
+        <a href="#" onclick="showSection('basics')">Основы</a>
+        <a href="#" onclick="showSection('oop')">ООП</a>
+        <a href="#" onclick="showSection('collections')">Коллекции</a>
+        <a href="#" onclick="showSection('exceptions')">Исключения</a>
+        <a href="#" onclick="showSection('io')">Ввод/Вывод</a>
+        <a href="#" onclick="showSection('threads')">Потоки</a>
+        <a href="#" onclick="showSection('lambda')">Лямбды и Stream API</a>
+        <a href="#" onclick="showSection('generics')">Дженерики</a>
+        <a href="#" onclick="showSection('annotations')">Аннотации</a>
+        <a href="#" onclick="showSection('enums')">Перечисления (Enums)</a>
+    </nav>
+    
+    <input type="text" id="search" placeholder="Глобальный поиск по ключевым словам (например, 'ArrayList' или 'try-catch')..." onkeyup="globalFilterContent()">
+    
+    <div id="mode-toggle" onclick="toggleDarkMode()">Переключить режим (Светлый/Темный)</div>
+    
+    <section id="basics" class="active">
+        <h2>Основы Java</h2>
+        <p>Java — объектно-ориентированный язык программирования с сильной типизацией. Основные типы данных: примитивные (int, double, boolean) и ссылочные (String, массивы).</p>
+        
+        <h3>Переменные и типы данных</h3>
+        <ul>
+            <li><strong>Примитивные типы:</strong> byte, short, int, long, float, double, char, boolean.</li>
+            <li><strong>Ссылочные типы:</strong> Классы, интерфейсы, массивы.</li>
+        </ul>
+        <pre class="language-java"><code>// Пример объявления переменных
+int age = 25;
+double salary = 1500.50;
+String name = "Alice";
+boolean isActive = true;</code></pre>
+        <p class="example">Пример: Используйте <code>int</code> для целых чисел в диапазоне -2^31 до 2^31-1.</p>
+        
+        <h3>Операторы</h3>
+        <p>Арифметические: +, -, *, /, %. Логические: &&, ||, !. Сравнения: ==, !=, >, <, >=, <=.</p>
+        <pre class="language-java"><code>// Пример операторов
+int a = 10;
+int b = 20;
+boolean result = (a < b) && (b % 2 == 0);</code></pre>
+        
+        <h3>Условные конструкции</h3>
+        <p>if-else, switch-case.</p>
+        <pre class="language-java"><code>if (age >= 18) {
+    System.out.println("Взрослый");
+} else {
+    System.out.println("Ребенок");
+}</code></pre>
+        
+        <h3>Циклы</h3>
+        <p>for, while, do-while, foreach.</p>
+        <pre class="language-java"><code>for (int i = 0; i < 5; i++) {
+    System.out.println(i);
+}</code></pre>
+    </section>
+    
+    <section id="oop">
+        <h2>Объектно-ориентированное программирование (ООП)</h2>
+        <p>Основные принципы: инкапсуляция, наследование, полиморфизм, абстракция.</p>
+        
+        <h3>Классы и объекты</h3>
+        <pre class="language-java"><code>class Person {
+    String name;
+    int age;
+    
+    void greet() {
+        System.out.println("Привет, " + name);
+    }
+}
+
+// Создание объекта
+Person p = new Person();
+p.name = "Bob";
+p.greet();</code></pre>
+        
+        <h3>Наследование</h3>
+        <p>Классы могут наследовать от других с помощью <code>extends</code>.</p>
+        <pre class="language-java"><code>class Employee extends Person {
+    double salary;
+}</code></pre>
+        
+        <h3>Интерфейсы</h3>
+        <p>Определяют контракт с помощью <code>implements</code>.</p>
+        <pre class="language-java"><code>interface Printable {
+    void print();
+}
+
+class Book implements Printable {
+    public void print() {
+        System.out.println("Печать книги");
+    }
+}</code></pre>
+        
+        <h3>Абстрактные классы</h3>
+        <pre class="language-java"><code>abstract class Shape {
+    abstract double area();
+}</code></pre>
+    </section>
+    
+    <section id="collections">
+        <h2>Коллекции</h2>
+        <p>Java Collections Framework: List, Set, Map, Queue.</p>
+        
+        <h3>ArrayList</h3>
+        <p>Динамический массив.</p>
+        <pre class="language-java"><code>import java.util.ArrayList;
+
+ArrayList<String> list = new ArrayList<>();
+list.add("Apple");
+list.add("Banana");
+System.out.println(list.get(0)); // Apple</code></pre>
+        
+        <h3>HashSet</h3>
+        <p>Множество без дубликатов.</p>
+        <pre class="language-java"><code>import java.util.HashSet;
+
+HashSet<Integer> set = new HashSet<>();
+set.add(1);
+set.add(2);</code></pre>
+        
+        <h3>HashMap</h3>
+        <p>Ключ-значение.</p>
+        <pre class="language-java"><code>import java.util.HashMap;
+
+HashMap<String, Integer> map = new HashMap<>();
+map.put("Age", 30);
+System.out.println(map.get("Age")); // 30</code></pre>
+    </section>
+    
+    <section id="exceptions">
+        <h2>Исключения</h2>
+        <p>Обработка ошибок с try-catch-finally, throws.</p>
+        
+        <h3>Базовый пример</h3>
+        <pre class="language-java"><code>try {
+    int x = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Деление на ноль!");
+} finally {
+    System.out.println("Завершение");
+}</code></pre>
+        
+        <h3>Пользовательские исключения</h3>
+        <pre class="language-java"><code>class MyException extends Exception {
+    MyException(String msg) {
+        super(msg);
+    }
+}</code></pre>
+    </section>
+    
+    <section id="io">
+        <h2>Ввод/Вывод (I/O)</h2>
+        <p>Работа с файлами, потоками.</p>
+        
+        <h3>Чтение файла</h3>
+        <pre class="language-java"><code>import java.io.*;
+
+try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+        
+        <h3>Запись в файл</h3>
+        <pre class="language-java"><code>try (BufferedWriter bw = new BufferedWriter(new FileWriter("file.txt"))) {
+    bw.write("Hello, Java!");
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+    </section>
+    
+    <section id="threads">
+        <h2>Потоки (Multithreading)</h2>
+        <p>Параллельное выполнение с Thread и Runnable.</p>
+        
+        <h3>Создание потока</h3>
+        <pre class="language-java"><code>class MyThread extends Thread {
+    public void run() {
+        System.out.println("Поток запущен");
+    }
+}
+
+MyThread t = new MyThread();
+t.start();</code></pre>
+        
+        <h3>Синхронизация</h3>
+        <pre class="language-java"><code>synchronized void method() {
+    // Критическая секция
+}</code></pre>
+    </section>
+    
+    <section id="lambda">
+        <h2>Лямбды и Stream API</h2>
+        <p>Функциональное программирование с Java 8+.</p>
+        
+        <h3>Лямбда-выражения</h3>
+        <pre class="language-java"><code>(int a, int b) -> a + b;</code></pre>
+        
+        <h3>Stream API</h3>
+        <pre class="language-java"><code>import java.util.*;
+import java.util.stream.*;
+
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+numbers.stream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * 2)
+    .forEach(System.out::println); // 4, 8</code></pre>
+    </section>
+    
+    <section id="generics">
+        <h2>Дженерики (Generics)</h2>
+        <p>Позволяют создавать классы, интерфейсы и методы с параметрами типов для type-safety.</p>
+        
+        <h3>Базовый пример класса</h3>
+        <pre class="language-java"><code>class Box<T> {
+    private T value;
+    
+    public void set(T value) {
+        this.value = value;
+    }
+    
+    public T get() {
+        return value;
+    }
+}
+
+Box<Integer> intBox = new Box<>();
+intBox.set(10);</code></pre>
+        
+        <h3>Ограничения типов</h3>
+        <p>Используйте <code>extends</code> для upper bound.</p>
+        <pre class="language-java"><code>class NumberBox<T extends Number> {
+    // ...
+}</code></pre>
+        
+        <h3>Wildcards</h3>
+        <pre class="language-java"><code>void printList(List<?> list) {
+    for (Object elem : list) {
+        System.out.println(elem);
+    }
+}</code></pre>
+    </section>
+    
+    <section id="annotations">
+        <h2>Аннотации (Annotations)</h2>
+        <p>Метаданные для кода, используемые для конфигурации, валидации и т.д.</p>
+        
+        <h3>Встроенные аннотации</h3>
+        <ul>
+            <li><code>@Override</code>: Переопределение метода.</li>
+            <li><code>@Deprecated</code>: Устаревший код.</li>
+            <li><code>@SuppressWarnings</code>: Подавление предупреждений.</li>
+        </ul>
+        <pre class="language-java"><code>@Override
+public String toString() {
+    return "Переопределенный toString";
+}</code></pre>
+        
+        <h3>Пользовательские аннотации</h3>
+        <pre class="language-java"><code>import java.lang.annotation.*;
+
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@interface MyAnnotation {
+    String value();
+}
+
+class MyClass {
+    @MyAnnotation("Test")
+    public void method() {}
+}</code></pre>
+    </section>
+    
+    <section id="enums">
+        <h2>Перечисления (Enums)</h2>
+        <p>Специальный тип класса для фиксированного набора констант.</p>
+        
+        <h3>Простой enum</h3>
+        <pre class="language-java"><code>enum Day {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
+Day today = Day.MONDAY;</code></pre>
+        
+        <h3>Enum с полями и методами</h3>
+        <pre class="language-java"><code>enum Planet {
+    MERCURY (3.303e+23, 2.4397e6),
+    VENUS   (4.869e+24, 6.0518e6);
+    
+    private final double mass;   // in kilograms
+    private final double radius; // in meters
+    
+    Planet(double mass, double radius) {
+        this.mass = mass;
+        this.radius = radius;
+    }
+    
+    public double surfaceGravity() {
+        return 6.67300E-11 * mass / (radius * radius);
+    }
+}</code></pre>
+    </section>
+    
+    <footer>
+        <p>© 2025 Справочник по Java. Создано с помощью HTML, CSS и JS. Подсветка кода: Prism.js.</p>
+    </footer>
+
+    <!-- Prism.js скрипт для подсветки -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('search').value = ''; // Сброс поиска
+            globalFilterContent(); // Обновить видимость
+        }
+        
+        function globalFilterContent() {
+            const query = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('section').forEach(section => {
+                let sectionVisible = false;
+                const elements = section.querySelectorAll('h2, h3, p, pre, ul li');
+                elements.forEach(el => {
+                    const text = el.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        el.style.display = 'block';
+                        sectionVisible = true;
+                    } else {
+                        el.style.display = 'none';
+                    }
+                    
+                    // Для pre и ul проверяем дочерние
+                    if (el.tagName === 'PRE' || el.tagName === 'UL') {
+                        let hasMatch = text.includes(query);
+                        el.querySelectorAll('*').forEach(child => {
+                            if (child.textContent.toLowerCase().includes(query)) hasMatch = true;
+                        });
+                        if (hasMatch) {
+                            el.style.display = 'block';
+                            sectionVisible = true;
+                        }
+                    }
+                });
+                
+                // Показываем раздел, если есть совпадения
+                if (sectionVisible || query === '') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+            
+            // Если поиск пустой, показываем только активный раздел
+            if (query === '') {
+                document.querySelectorAll('section:not(.active)').forEach(sec => sec.style.display = 'none');
+            }
+        }
+        
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            // Переключение темы Prism (опционально: можно добавить больше тем)
+            const themeLink = document.getElementById('prism-theme');
+            if (document.body.classList.contains('dark-mode')) {
+                themeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css';
+            } else {
+                themeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css';
+            }
+        }
+    </script>
+</body>
+</html>

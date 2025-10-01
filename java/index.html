@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детальный Справочник по Java</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        nav {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        #search {
+            width: 80%;
+            max-width: 600px;
+            padding: 10px;
+            margin: 20px auto;
+            display: block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        section {
+            display: none;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        section.active {
+            display: block;
+        }
+        h2 {
+            color: #007bff;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, monospace;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .example {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Детальный Справочник по Java</h1>
+        <p>Полный гид по основам, ООП, коллекциям, исключениям и многому другому. С примерами кода и объяснениями.</p>
+    </header>
+    
+    <nav>
+        <a href="#" onclick="showSection('basics')">Основы</a>
+        <a href="#" onclick="showSection('oop')">ООП</a>
+        <a href="#" onclick="showSection('collections')">Коллекции</a>
+        <a href="#" onclick="showSection('exceptions')">Исключения</a>
+        <a href="#" onclick="showSection('io')">Ввод/Вывод</a>
+        <a href="#" onclick="showSection('threads')">Потоки</a>
+        <a href="#" onclick="showSection('lambda')">Лямбды и Stream API</a>
+    </nav>
+    
+    <input type="text" id="search" placeholder="Поиск по ключевым словам (например, 'ArrayList' или 'try-catch')..." onkeyup="filterContent()">
+    
+    <section id="basics" class="active">
+        <h2>Основы Java</h2>
+        <p>Java — объектно-ориентированный язык программирования с сильной типизацией. Основные типы данных: примитивные (int, double, boolean) и ссылочные (String, массивы).</p>
+        
+        <h3>Переменные и типы данных</h3>
+        <ul>
+            <li><strong>Примитивные типы:</strong> byte, short, int, long, float, double, char, boolean.</li>
+            <li><strong>Ссылочные типы:</strong> Классы, интерфейсы, массивы.</li>
+        </ul>
+        <pre><code>// Пример объявления переменных
+int age = 25;
+double salary = 1500.50;
+String name = "Alice";
+boolean isActive = true;</code></pre>
+        <p class="example">Пример: Используйте <code>int</code> для целых чисел в диапазоне -2^31 до 2^31-1.</p>
+        
+        <h3>Операторы</h3>
+        <p>Арифметические: +, -, *, /, %. Логические: &&, ||, !. Сравнения: ==, !=, >, <, >=, <=.</p>
+        <pre><code>// Пример операторов
+int a = 10;
+int b = 20;
+boolean result = (a < b) && (b % 2 == 0);</code></pre>
+        
+        <h3>Условные конструкции</h3>
+        <p>if-else, switch-case.</p>
+        <pre><code>if (age >= 18) {
+    System.out.println("Взрослый");
+} else {
+    System.out.println("Ребенок");
+}</code></pre>
+        
+        <h3>Циклы</h3>
+        <p>for, while, do-while, foreach.</p>
+        <pre><code>for (int i = 0; i < 5; i++) {
+    System.out.println(i);
+}</code></pre>
+    </section>
+    
+    <section id="oop">
+        <h2>Объектно-ориентированное программирование (ООП)</h2>
+        <p>Основные принципы: инкапсуляция, наследование, полиморфизм, абстракция.</p>
+        
+        <h3>Классы и объекты</h3>
+        <pre><code>class Person {
+    String name;
+    int age;
+    
+    void greet() {
+        System.out.println("Привет, " + name);
+    }
+}
+
+// Создание объекта
+Person p = new Person();
+p.name = "Bob";
+p.greet();</code></pre>
+        
+        <h3>Наследование</h3>
+        <p>Классы могут наследовать от других с помощью <code>extends</code>.</p>
+        <pre><code>class Employee extends Person {
+    double salary;
+}</code></pre>
+        
+        <h3>Интерфейсы</h3>
+        <p>Определяют контракт с помощью <code>implements</code>.</p>
+        <pre><code>interface Printable {
+    void print();
+}
+
+class Book implements Printable {
+    public void print() {
+        System.out.println("Печать книги");
+    }
+}</code></pre>
+        
+        <h3>Абстрактные классы</h3>
+        <pre><code>abstract class Shape {
+    abstract double area();
+}</code></pre>
+    </section>
+    
+    <section id="collections">
+        <h2>Коллекции</h2>
+        <p>Java Collections Framework: List, Set, Map, Queue.</p>
+        
+        <h3>ArrayList</h3>
+        <p>Динамический массив.</p>
+        <pre><code>import java.util.ArrayList;
+
+ArrayList<String> list = new ArrayList<>();
+list.add("Apple");
+list.add("Banana");
+System.out.println(list.get(0)); // Apple</code></pre>
+        
+        <h3>HashSet</h3>
+        <p>Множество без дубликатов.</p>
+        <pre><code>import java.util.HashSet;
+
+HashSet<Integer> set = new HashSet<>();
+set.add(1);
+set.add(2);</code></pre>
+        
+        <h3>HashMap</h3>
+        <p>Ключ-значение.</p>
+        <pre><code>import java.util.HashMap;
+
+HashMap<String, Integer> map = new HashMap<>();
+map.put("Age", 30);
+System.out.println(map.get("Age")); // 30</code></pre>
+    </section>
+    
+    <section id="exceptions">
+        <h2>Исключения</h2>
+        <p>Обработка ошибок с try-catch-finally, throws.</p>
+        
+        <h3>Базовый пример</h3>
+        <pre><code>try {
+    int x = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Деление на ноль!");
+} finally {
+    System.out.println("Завершение");
+}</code></pre>
+        
+        <h3>Пользовательские исключения</h3>
+        <pre><code>class MyException extends Exception {
+    MyException(String msg) {
+        super(msg);
+    }
+}</code></pre>
+    </section>
+    
+    <section id="io">
+        <h2>Ввод/Вывод (I/O)</h2>
+        <p>Работа с файлами, потоками.</p>
+        
+        <h3>Чтение файла</h3>
+        <pre><code>import java.io.*;
+
+try (BufferedReader br = new BufferedReader(new FileReader("file.txt"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        System.out.println(line);
+    }
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+        
+        <h3>Запись в файл</h3>
+        <pre><code>try (BufferedWriter bw = new BufferedWriter(new FileWriter("file.txt"))) {
+    bw.write("Hello, Java!");
+} catch (IOException e) {
+    e.printStackTrace();
+}</code></pre>
+    </section>
+    
+    <section id="threads">
+        <h2>Потоки (Multithreading)</h2>
+        <p>Параллельное выполнение с Thread и Runnable.</p>
+        
+        <h3>Создание потока</h3>
+        <pre><code>class MyThread extends Thread {
+    public void run() {
+        System.out.println("Поток запущен");
+    }
+}
+
+MyThread t = new MyThread();
+t.start();</code></pre>
+        
+        <h3>Синхронизация</h3>
+        <pre><code>synchronized void method() {
+    // Критическая секция
+}</code></pre>
+    </section>
+    
+    <section id="lambda">
+        <h2>Лямбды и Stream API</h2>
+        <p>Функциональное программирование с Java 8+.</p>
+        
+        <h3>Лямбда-выражения</h3>
+        <pre><code>(int a, int b) -> a + b;</code></pre>
+        
+        <h3>Stream API</h3>
+        <pre><code>import java.util.*;
+import java.util.stream.*;
+
+List<Integer> numbers = Arrays.asList(1, 2, 3, 4);
+numbers.stream()
+    .filter(n -> n % 2 == 0)
+    .map(n -> n * 2)
+    .forEach(System.out::println); // 4, 8</code></pre>
+    </section>
+    
+    <footer>
+        <p>© 2025 Справочник по Java. Создано с помощью HTML, CSS и JS.</p>
+    </footer>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.getElementById('search').value = ''; // Сброс поиска
+            filterContent(); // Обновить видимость
+        }
+        
+        function filterContent() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const activeSection = document.querySelector('section.active');
+            if (!activeSection) return;
+            
+            const elements = activeSection.querySelectorAll('h3, p, pre, ul li');
+            elements.forEach(el => {
+                const text = el.textContent.toLowerCase();
+                el.style.display = text.includes(query) ? 'block' : 'none';
+                
+                // Для pre и ul проверяем дочерние
+                if (el.tagName === 'PRE' || el.tagName === 'UL') {
+                    let hasMatch = false;
+                    el.querySelectorAll('*').forEach(child => {
+                        if (child.textContent.toLowerCase().includes(query)) hasMatch = true;
+                    });
+                    if (hasMatch) el.style.display = 'block';
+                }
+            });
+            
+            // Скрываем h2 если нет видимого контента ниже
+            const h2s = activeSection.querySelectorAll('h2');
+            h2s.forEach(h2 => {
+                let next = h2.nextElementSibling;
+                let visible = false;
+                while (next && next.tagName !== 'H2') {
+                    if (next.style.display !== 'none') visible = true;
+                    next = next.nextElementSibling;
+                }
+                h2.style.display = visible ? 'block' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
