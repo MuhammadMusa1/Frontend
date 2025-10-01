@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта желаний</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.input-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+#wish-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+#wish-input:focus {
+    border-color: #007bff;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.wish-board {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.wish-card {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: relative;
+    cursor: move;
+    transition: transform 0.2s;
+}
+
+.wish-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.wish-card.completed {
+    background-color: #d4edda;
+    border: 1px solid #28a745;
+}
+
+.wish-card p {
+    margin-bottom: 1rem;
+    word-wrap: break-word;
+}
+
+.wish-card .actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.wish-card button {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.6rem;
+}
+
+.wish-card .complete-btn {
+    background-color: #28a745;
+}
+
+.wish-card .complete-btn:hover {
+    background-color: #218838;
+}
+
+.wish-card .edit-btn {
+    background-color: #ffc107;
+}
+
+.wish-card .edit-btn:hover {
+    background-color: #e0a800;
+}
+
+.wish-card .delete-btn {
+    background-color: #dc3545;
+}
+
+.wish-card .delete-btn:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 600px) {
+    .wish-board {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+</style>
+    <div class="container">
+        <h1>Карта желаний</h1>
+        <div class="input-section">
+            <input type="text" id="wish-input" placeholder="Введите ваше желание или задание" required>
+            <button onclick="addWish()">Добавить</button>
+        </div>
+        <div class="wish-board" id="wish-board">
+        </div>
+    </div>
+    <script>
+
+const defaultWishes = [
+    { id: Date.now() + 1, text: 'Научиться программировать на Python', completed: false },
+    { id: Date.now() + 2, text: 'Прочитать 10 книг по саморазвитию', completed: false },
+    { id: Date.now() + 3, text: 'Путешествие куда нибудь ', completed: false },
+    { id: Date.now() + 4, text: 'Пробежать марафон', completed: false },
+    { id: Date.now() + 5, text: 'Выучить английский до уровня C1', completed: false },
+    { id: Date.now() + 6, text: 'Создать собственное мобильное приложение', completed: false },
+    { id: Date.now() + 7, text: 'Медитировать 10 минут каждый день', completed: false },
+    { id: Date.now() + 8, text: 'Создать калькулятор', completed: false },
+    { id: Date.now() + 9, text: 'Посетить концерт любимой группы', completed: false },
+    { id: Date.now() + 10, text: 'Научиться готовить 5 новых блюд', completed: false }
+];
+
+function addWish() {
+    const wishInput = document.getElementById('wish-input');
+    const wishText = wishInput.value.trim();
+
+    if (wishText === '') {
+        alert('Введите желание!');
+        return;
+    }
+
+    const wish = {
+        id: Date.now(),
+        text: wishText,
+        completed: false
+    };
+    createWishCard(wish);
+
+
+    saveWish(wish);
+
+   
+    wishInput.value = '';
+}
+
+function createWishCard(wish) {
+    const wishBoard = document.getElementById('wish-board');
+    const wishCard = document.createElement('div');
+    wishCard.classList.add('wish-card');
+    wishCard.setAttribute('draggable', true);
+    wishCard.setAttribute('data-id', wish.id);
+
+    if (wish.completed) {
+        wishCard.classList.add('completed');
+    }
+
+    wishCard.innerHTML = `
+        <p>${wish.text}</p>
+        <div class="actions">
+            <button class="complete-btn" onclick="toggleComplete(${wish.id})">${wish.completed ? 'Отменить' : 'Выполнено'}</button>
+            <button class="edit-btn" onclick="editWish(${wish.id})">Редактировать</button>
+            <button class="delete-btn" onclick="deleteWish(${wish.id})">Удалить</button>
+        </div>
+    `;
+
+    wishBoard.appendChild(wishCard);
+
+
+    wishCard.addEventListener('dragstart', dragStart);
+    wishCard.addEventListener('dragover', dragOver);
+    wishCard.addEventListener('drop', drop);
+}
+
+function saveWish(wish) {
+    let wishes = getWishes();
+    wishes.push(wish);
+    localStorage.setItem('wishes', JSON.stringify(wishes));
+}
+
+function getWishes() {
+    let wishes = JSON.parse(localStorage.getItem('wishes'));
+  
+    if (!wishes || wishes.length === 0) {
+        return defaultWishes;
+    }
+    return wishes;
+}
+
+function loadWishes() {
+    const wishes = getWishes();
+    wishes.forEach(wish => createWishCard(wish));
+}
+
+function toggleComplete(id) {
+    let wishes = getWishes();
+    wishes = wishes.map(wish => {
+        if (wish.id === id) {
+            wish.completed = !wish.completed;
+        }
+        return wish;
+    });
+    localStorage.setItem('wishes', JSON.stringify(wishes));
+    refreshBoard();
+}
+
+function editWish(id) {
+    let wishes = getWishes();
+    const wish = wishes.find(w => w.id === id);
+    const newText = prompt('Редактировать желание:', wish.text);
+    if (newText && newText.trim() !== '') {
+        wishes = wishes.map(w => {
+            if (w.id === id) {
+                w.text = newText.trim();
+            }
+            return w;
+        });
+        localStorage.setItem('wishes', JSON.stringify(wishes));
+        refreshBoard();
+    }
+}
+
+function deleteWish(id) {
+    if (confirm('Удалить это желание?')) {
+        let wishes = getWishes();
+        wishes = wishes.filter(w => w.id !== id);
+        localStorage.setItem('wishes', JSON.stringify(wishes));
+        refreshBoard();
+    }
+}
+
+function refreshBoard() {
+const wishBoard = document.getElementById('wish-board');
+    wishBoard.innerHTML = '';
+    loadWishes();
+}
+
+
+let draggedCard = null;
+
+function dragStart(e) {
+    draggedCard = e.target;
+    setTimeout(() => {
+        draggedCard.classList.add('dragging');
+    }, 0);
+}
+
+function dragOver(e) {
+    e.preventDefault();
+}
+
+function drop(e) {
+    e.preventDefault();
+    const targetCard = e.target.closest('.wish-card');
+    if (targetCard && draggedCard !== targetCard) {
+        const wishBoard = document.getElementById('wish-board');
+        const allCards = Array.from(wishBoard.querySelectorAll('.wish-card'));
+        const draggedIndex = allCards.indexOf(draggedCard);
+        const targetIndex = allCards.indexOf(targetCard);
+
+        let wishes = getWishes();
+        const [draggedWish] = wishes.splice(draggedIndex, 1);
+        wishes.splice(targetIndex, 0, draggedWish);
+        localStorage.setItem('wishes', JSON.stringify(wishes));
+        refreshBoard();
+    }
+    draggedCard.classList.remove('dragging');
+    draggedCard = null;
+}
+</script>
+</body>
+</html>
