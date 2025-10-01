@@ -1,0 +1,301 @@
+/* === CSS ПЕРЕМЕННЫЕ === */
+:root {
+  --primary-color: #28a745;
+  --primary-hover: #218838;
+  --danger-color: #dc3545;
+  --danger-hover: #c82333;
+  --background: #f4f4f4;
+  --card-bg: #ffffff;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --border-radius: 8px;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* === БАЗОВЫЕ СТИЛИ === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  line-height: 1.6;
+  padding: 20px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+/* === ШАПКА === */
+header {
+  background: linear-gradient(135deg, var(--primary-color), #20c997);
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* === ОСНОВНОЙ КОНТЕНТ === */
+main {
+  padding: 30px 20px;
+}
+
+.input-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+#note-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  background: var(--card-bg);
+}
+
+#note-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
+}
+
+#note-input::placeholder {
+  color: #6c757d;
+}
+
+#add-btn {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+#add-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+}
+
+#add-btn:active {
+  transform: translateY(0);
+}
+
+/* === КОНТЕЙНЕР ЗАМЕТОК === */
+.notes-container {
+  position: relative;
+  min-height: 200px;
+}
+
+#note-list {
+  list-style-type: none;
+}
+
+.note-item {
+  background: var(--card-bg);
+  margin: 12px 0;
+  padding: 16px;
+  border-left: 4px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  transition: var(--transition);
+  animation: slideIn 0.3s ease;
+}
+
+.note-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.note-text {
+  flex: 1;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.note-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.delete-btn {
+  background-color: var(--danger-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.delete-btn:hover {
+  background-color: var(--danger-hover);
+  transform: scale(1.05);
+}
+
+/* === СОСТОЯНИЕ ПУСТОГО СПИСКА === */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state p:first-child {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
+
+.empty-state.hidden {
+  display: none;
+}
+
+/* === ФУТЕР === */
+footer {
+  background: #f8f9fa;
+  padding: 20px;
+  text-align: center;
+  border-top: 1px solid #e9ecef;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* === АНИМАЦИИ === */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.note-item.removing {
+  animation: slideOut 0.3s ease forwards;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .input-section {
+    flex-direction: column;
+  }
+  
+  #note-input {
+    min-width: auto;
+  }
+  
+  #add-btn {
+    width: 100%;
+  }
+  
+  .note-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .note-actions {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 20px 15px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  main {
+    padding: 20px 15px;
+  }
+  
+  .note-item {
+    padding: 12px;
+  }
+}
+
+/* === СТИЛИ ДЛЯ ПУСТОГО ВВОДА === */
+.input-error {
+  border-color: var(--danger-color) !important;
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* === СКРОЛЛБАР === */
+#note-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+#note-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#note-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#note-list::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+#note-list::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
+}
