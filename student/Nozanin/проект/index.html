@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор мемов</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -14,6 +15,14 @@
             <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
                 📁 Выбрать изображение
             </button>
+        </div>
+
+        <div class="examples-section">
+            <h3>Быстрые примеры:</h3>
+            <div class="example-buttons">
+                <button class="example-btn" onclick="loadExample(0)">Пример 1</button>
+                <button class="example-btn" onclick="loadExample(1)">Пример 2</button>
+            </div>
         </div>
 
         <div class="text-inputs">
@@ -35,6 +44,7 @@
             💾 Скачать мем
         </button>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-

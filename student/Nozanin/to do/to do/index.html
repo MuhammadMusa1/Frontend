@@ -1,159 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-     body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9f9f9;
-    margin: 0;
-    padding: 40px;
-    display: flex;
-    justify-content: center;
-  }
-  #todoApp {
-    background: white;
-    width: 350px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    padding: 20px;
-  }
-  h2 {
-    text-align: center;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  input[type="text"] {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-  }
-  input[type="text"]:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  button {
-    padding: 10px 15px;
-    border: none;
-    background: #007bff;
-    color: white;
-    font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover {
-    background: #0056b3;
-  }
-  ul {
-    list-style: none;
-    padding-left: 0;
-    max-height: 300px;
-    overflow-y: auto;
-  }
-  li {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 8px;
-    border-bottom: 1px solid #eee;
-    align-items: center;
-  }
-  li.completed span {
-    text-decoration: line-through;
-    color: #999;
-  }
-  li span {
-    flex-grow: 1;
-    cursor: pointer;
-  }
-  .deleteBtn {
-    background: #ff4d4d;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .deleteBtn:hover {
-    background: #cc0000;
-  }
-</style>
+    <meta name="description" content="Простое и удобное приложение для управления задачами">
+    <title>ToDo List - Менеджер задач</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div class="app-container">
+        <div id="todoApp">
+            <header class="app-header">
+                <h1>📝 ToDo Список</h1>
+                <p class="tasks-counter">Задач: <span id="tasksCount">0</span></p>
+            </header>
+            
+            <main class="app-main">
+                <form id="todoForm" class="todo-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="todoInput" 
+                            placeholder="Добавить новую задачу..." 
+                            aria-label="Текст новой задачи"
+                            maxlength="200"
+                        />
+                        <button type="submit" id="addBtn" aria-label="Добавить задачу">
+                            <span class="btn-text">+ Добавить</span>
+                            <span class="btn-loading">⏳</span>
+                        </button>
+                    </div>
+                </form>
 
-<div id="todoApp">
-  <h2>ToDo Список</h2>
-  <form id="todoForm">
-    <input type="text" id="todoInput" placeholder="Новая задача" required />
-    <button type="submit">Добавить</button>
-  </form>
-  <ul id="todoList"></ul>
-</div>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">Все</button>
+                    <button class="filter-btn" data-filter="active">Активные</button>
+                    <button class="filter-btn" data-filter="completed">Выполненные</button>
+                </div>
 
-<script>
-  const todoForm = document.getElementById('todoForm');
-  const todoInput = document.getElementById('todoInput');
-  const todoList = document.getElementById('todoList');
+                <div class="todo-container">
+                    <ul id="todoList" class="todo-list"></ul>
+                    <div id="emptyState" class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <h3>Список пуст</h3>
+                        <p>Добавьте первую задачу выше</p>
+                    </div>
+                </div>
+            </main>
 
-  let todos = JSON.parse(localStorage.getItem('todos')) || [];
+            <footer class="app-footer">
+                <div class="footer-info">
+                    <span>Задач выполнено: <span id="completedCount">0</span></span>
+                    <button id="clearCompleted" class="clear-btn">Очистить выполненные</button>
+                </div>
+            </footer>
+        </div>
+    </div>
 
-  function saveTodos() {
-    localStorage.setItem('todos', JSON.stringify(todos));
-  }
-
-  function renderTodos() {
-    todoList.innerHTML = '';
-    todos.forEach((todo, index) => {
-      const li = document.createElement('li');
-      li.className = todo.completed ? 'completed' : '';
-
-      const span = document.createElement('span');
-      span.textContent = todo.text;
-      span.addEventListener('click', () => {
-        todos[index].completed = !todos[index].completed;
-        saveTodos();
-        renderTodos();
-      });
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = 'Удалить';
-      deleteBtn.className = 'deleteBtn';
-      deleteBtn.addEventListener('click', () => {
-        todos.splice(index, 1);
-        saveTodos();
-        renderTodos();
-      });
-
-      li.appendChild(span);
-      li.appendChild(deleteBtn);
-      todoList.appendChild(li);
-    });
-  }
-
-  todoForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const text = todoInput.value.trim();
-    if (text) {
-      todos.push({ text, completed: false });
-      saveTodos();
-      renderTodos();
-      todoInput.value = '';
-      todoInput.focus();
-    }
-  });
-
-  renderTodos();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>

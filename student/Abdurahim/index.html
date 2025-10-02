@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор мемов</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -16,6 +17,14 @@
             </button>
         </div>
 
+        <div class="examples-section">
+            <h3>Быстрые примеры:</h3>
+            <div class="example-buttons">
+                <button class="example-btn" onclick="loadExample(0)">Драконий мем</button>
+                <button class="example-btn" onclick="loadExample(1)">Котик мем</button>
+            </div>
+        </div>
+
         <div class="text-inputs">
             <input type="text" id="topText" placeholder="Введите верхний текст...">
             <input type="text" id="bottomText" placeholder="Введите нижний текст...">
@@ -26,7 +35,7 @@
         </button>
 
         <div class="meme-container">
-            <img id="memeImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300' viewBox='0 0 500 300'%3E%3Crect width='500' height='300' fill='%23f0f0f0'/%3E%3Ctext x='250' y='150' font-family='Arial' font-size='20' fill='%23ccc' text-anchor='middle'%3EВыберите изображение%3C/text%3E%3C/svg%3E" alt="Мем">
+            <canvas id="memeCanvas" width="500" height="300"></canvas>
             <div id="topTextDisplay" class="meme-text top-text"></div>
             <div id="bottomTextDisplay" class="meme-text bottom-text"></div>
         </div>
@@ -35,6 +44,7 @@
             💾 Скачать мем
         </button>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
-

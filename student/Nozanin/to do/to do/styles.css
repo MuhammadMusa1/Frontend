@@ -1,0 +1,453 @@
+/* === CSS ПЕРЕМЕННЫЕ === */
+:root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --danger-color: #ff4d4d;
+    --danger-hover: #cc0000;
+    --success-color: #28a745;
+    --warning-color: #ffc107;
+    --background: #f9f9f9;
+    --card-bg: #ffffff;
+    --text-primary: #333;
+    --text-secondary: #666;
+    --text-muted: #999;
+    --border-color: #eee;
+    --border-radius: 10px;
+    --shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+/* === БАЗОВЫЕ СТИЛИ === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.app-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* === ОСНОВНОЙ КОНТЕЙНЕР === */
+#todoApp {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 450px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* === ШАПКА === */
+.app-header {
+    background: linear-gradient(135deg, var(--primary-color), #0056b3);
+    color: white;
+    padding: 25px 20px;
+    text-align: center;
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.tasks-counter {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* === ФОРМА ДОБАВЛЕНИЯ === */
+.app-main {
+    padding: 25px 20px;
+}
+
+.todo-form {
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#todoInput {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--card-bg);
+}
+
+#todoInput:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+#todoInput::placeholder {
+    color: var(--text-muted);
+}
+
+#addBtn {
+    padding: 12px 20px;
+    border: none;
+    background: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+
+#addBtn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+#addBtn:active {
+    transform: translateY(0);
+}
+
+.btn-loading {
+    display: none;
+}
+
+#addBtn.loading .btn-text {
+    display: none;
+}
+
+#addBtn.loading .btn-loading {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* === ФИЛЬТРЫ === */
+.filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+/* === СПИСОК ЗАДАЧ === */
+.todo-container {
+    position: relative;
+    min-height: 200px;
+}
+
+.todo-list {
+    list-style: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.todo-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 3px;
+}
+
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    transition: var(--transition);
+    animation: slideIn 0.3s ease;
+    gap: 12px;
+}
+
+.todo-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+}
+
+.todo-item:last-child {
+    border-bottom: none;
+}
+
+.todo-item.completed {
+    opacity: 0.7;
+}
+
+.todo-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    cursor: pointer;
+}
+
+.todo-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    flex-shrink: 0;
+}
+
+.todo-item.completed .todo-checkbox {
+    background: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.todo-text {
+    flex: 1;
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+.todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+.todo-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.delete-btn {
+    background: var(--danger-color);
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.delete-btn:hover {
+    background: var(--danger-hover);
+    transform: scale(1.05);
+}
+
+/* === СОСТОЯНИЕ ПУСТОГО СПИСКА === */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+    display: none;
+}
+
+.empty-state.show {
+    display: block;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    font-weight: 400;
+}
+
+.empty-state p {
+    font-size: 0.9rem;
+}
+
+/* === ФУТЕР === */
+.app-footer {
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.footer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.clear-btn {
+    background: transparent;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.8rem;
+}
+
+.clear-btn:hover {
+    background: var(--danger-color);
+    color: white;
+}
+
+.clear-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.clear-btn:disabled:hover {
+    background: transparent;
+    color: var(--danger-color);
+}
+
+/* === АНИМАЦИИ === */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+.todo-item.removing {
+    animation: slideOut 0.3s ease forwards;
+}
+
+/* === АДАПТИВНОСТЬ === */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .input-group {
+        flex-direction: column;
+    }
+    
+    #todoInput {
+        min-width: auto;
+    }
+    
+    .filters {
+        justify-content: center;
+    }
+    
+    .footer-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-header {
+        padding: 20px 15px;
+    }
+    
+    .app-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .app-main {
+        padding: 20px 15px;
+    }
+    
+    .todo-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .todo-actions {
+        align-self: flex-end;
+    }
+}
+
+/* === СТИЛИ ДЛЯ ОШИБОК === */
+.input-error {
+    border-color: var(--danger-color) !important;
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* === УТИЛИТЫ === */
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
