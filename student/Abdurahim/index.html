@@ -8,41 +8,47 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎭 Генератор Мемов</h1>
+        <h1>🎨 Генератор Мемов</h1>
         
-        <div class="upload-section">
-            <input type="file" id="imageUpload" accept="image/*" class="hidden">
-            <button class="upload-btn" onclick="document.getElementById('imageUpload').click()">
-                📁 Выбрать изображение
-            </button>
-        </div>
+        <div class="control-panel">
+            <div class="upload-section">
+                <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                <button class="btn upload-btn" onclick="document.getElementById('imageUpload').click()">
+                    📁 Загрузить изображение
+                </button>
+            </div>
 
-        <div class="examples-section">
-            <h3>Быстрые примеры:</h3>
-            <div class="example-buttons">
-                <button class="example-btn" onclick="loadExample(0)">Драконий мем</button>
-                <button class="example-btn" onclick="loadExample(1)">Котик мем</button>
+            <div class="examples-section">
+                <h3>Примеры:</h3>
+                <div class="example-buttons">
+                    <button class="btn example-btn" onclick="loadExample(0)">Драконий мем</button>
+                    <button class="btn example-btn" onclick="loadExample(1)">Котик мем</button>
+                </div>
+            </div>
+
+            <div class="text-controls">
+                <div class="text-input-group">
+                    <input type="text" id="newText" placeholder="Введите текст...">
+                    <select id="fontSize">
+                        <option value="24">24px</option>
+                        <option value="32" selected>32px</option>
+                        <option value="40">40px</option>
+                        <option value="48">48px</option>
+                    </select>
+                    <input type="color" id="textColor" value="#ffffff">
+                    <button class="btn add-text-btn" onclick="addTextBox()">➕ Добавить текст</button>
+                </div>
             </div>
         </div>
 
-        <div class="text-inputs">
-            <input type="text" id="topText" placeholder="Введите верхний текст...">
-            <input type="text" id="bottomText" placeholder="Введите нижний текст...">
+        <div class="meme-container" id="memeContainer">
+            <canvas id="memeCanvas" width="600" height="400"></canvas>
         </div>
 
-        <button class="generate-btn" onclick="generateMeme()">
-            🎨 Сгенерировать мем
-        </button>
-
-        <div class="meme-container">
-            <canvas id="memeCanvas" width="500" height="300"></canvas>
-            <div id="topTextDisplay" class="meme-text top-text"></div>
-            <div id="bottomTextDisplay" class="meme-text bottom-text"></div>
+        <div class="action-buttons">
+            <button class="btn generate-btn" onclick="generateMeme()">🎨 Обновить мем</button>
+            <button class="btn download-btn" onclick="downloadMeme()">💾 Скачать мем</button>
         </div>
-
-        <button class="download-btn" onclick="downloadMeme()">
-            💾 Скачать мем
-        </button>
     </div>
 
     <script src="script.js"></script>

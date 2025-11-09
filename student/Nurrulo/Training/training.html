@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Планировщик тренировок</title>
+    <link rel="stylesheet" href="training.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app" v-cloak>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="header">
+            <h1><i class="fas fa-dumbbell"></i> Планировщик тренировок</h1>
+            <div class="header-controls">
+                <button id="newWorkoutBtn" class="btn btn-primary" @click="openNewWorkout">
+                    <i class="fas fa-plus"></i> Новая тренировка
+                </button>
+                <button id="statsBtn" class="btn btn-secondary" @click="openStats">
+                    <i class="fas fa-chart-line"></i> Статистика
+                </button>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Список тренировок -->
+            <section id="workoutsList" class="workouts-section" :class="{ hidden: view!=='list' }">
+                <h2>Мои тренировки</h2>
+                <div id="workoutsContainer" class="workouts-container">
+                    <div class="workout-card" v-for="(w, idx) in workouts" :key="w.id">
+                        <h3>{{ w.name }}</h3>
+                        <p v-if="w.description">{{ w.description }}</p>
+                        <div class="workout-stats">
+                            <span>{{ w.exercises.length }} упражнений</span>
+                            <span v-if="w.totalMinutes">~ {{ w.totalMinutes }} мин</span>
+                        </div>
+                        <div class="workout-actions">
+                            <button class="btn btn-primary" @click="startWorkout(idx)"><i class="fas fa-play"></i> Начать</button>
+                            <button class="btn btn-secondary" @click="editWorkout(idx)"><i class="fas fa-edit"></i> Редактировать</button>
+                            <button class="btn btn-danger" @click="deleteWorkout(idx)"><i class="fas fa-trash"></i> Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Форма создания тренировки -->
+            <section id="workoutForm" class="workout-form" :class="{ hidden: view!=='form' }">
+                <div class="form-header">
+                    <h2>Создание новой тренировки</h2>
+                    <button id="closeFormBtn" class="btn btn-close" @click="closeForm">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="newWorkoutForm" @submit.prevent="saveWorkout">
+                    <div class="form-group">
+                        <label for="workoutName">Название тренировки:</label>
+                        <input type="text" id="workoutName" v-model.trim="form.name" required placeholder="Например: Силовая тренировка">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="workoutDescription">Описание:</label>
+                        <textarea id="workoutDescription" v-model.trim="form.description" placeholder="Описание тренировки"></textarea>
+                    </div>
+
+                    <div class="exercises-section">
+                        <h3>Упражнения</h3>
+                        <div id="exercisesContainer">
+                            <div class="exercise-item" v-for="(ex, i) in form.exercises" :key="ex.uid">
+                                <div class="exercise-header">
+                                    <span class="exercise-name">
+                                        <input type="text" v-model.trim="ex.name" placeholder="Название упражнения">
+                                    </span>
+                                    <button type="button" class="btn btn-danger" @click="removeExercise(i)"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="exercise-fields">
+                                    <div class="field-group">
+                                        <label>Подходы</label>
+                                        <input type="number" min="1" v-model.number="ex.sets">
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Повторения</label>
+                                        <input type="number" min="1" v-model.number="ex.reps">
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Вес (кг)</label>
+                                        <input type="number" min="0" step="0.5" v-model.number="ex.weight">
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Отдых (сек)</label>
+                                        <input type="number" min="0" v-model.number="ex.rest">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="addExerciseBtn" class="btn btn-secondary" @click="addExercise">
+                            <i class="fas fa-plus"></i> Добавить упражнение
+                        </button>
+                        <button type="button" class="btn btn-primary" style="margin-left:10px" @click="showLibrary=true">
+                            <i class="fas fa-book"></i> Открыть библиотеку
+                        </button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Сохранить тренировку</button>
+                        <button type="button" id="cancelWorkoutBtn" class="btn btn-secondary" @click="closeForm">Отмена</button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Активная тренировка -->
+            <section id="activeWorkout" class="active-workout" :class="{ hidden: view!=='active' }">
+                <div class="workout-header">
+                    <h2 id="activeWorkoutName">{{ currentWorkout?.name || 'Тренировка' }}</h2>
+                    <button id="endWorkoutBtn" class="btn btn-danger" @click="endWorkout">
+                        <i class="fas fa-stop"></i> Завершить
+                    </button>
+                </div>
+
+                <div class="timer-section">
+                    <div class="timer-display">
+                        <div class="timer-circle">
+                            <span id="timerDisplay">{{ formattedTime }}</span>
+                        </div>
+                        <div class="timer-controls">
+                            <button id="startTimerBtn" class="btn btn-success" @click="startTimer" v-if="!isRunning">
+                                <i class="fas fa-play"></i> Старт
+                            </button>
+                            <button id="pauseTimerBtn" class="btn btn-warning" @click="pauseTimer" v-else>
+                                <i class="fas fa-pause"></i> Пауза
+                            </button>
+                            <button id="resetTimerBtn" class="btn btn-secondary" @click="resetTimer">
+                                <i class="fas fa-redo"></i> Сброс
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="current-exercise">
+                    <h3 id="currentExerciseName">{{ currentExercise ? currentExercise.name : 'Выберите упражнение' }}</h3>
+                    <div class="exercise-progress">
+                        <div class="progress-bar">
+                            <div id="exerciseProgress" class="progress-fill" :style="{ width: currentProgress + '%' }"></div>
+                        </div>
+                        <span id="exerciseProgressText">{{ completedSets }} / {{ currentExercise?.sets || 0 }} подходов</span>
+                    </div>
+                </div>
+
+                <div id="exercisesList" class="exercises-list">
+                    <div class="exercise-card" v-for="(ex, i) in currentWorkout?.exercises || []" :key="ex.uid" :class="{ active: i===currentExerciseIndex }" @click="selectExercise(i)">
+                        <div class="exercise-info">
+                            <strong>{{ ex.name }}</strong>
+                            <span>{{ ex.sets }}x{{ ex.reps }} • {{ ex.weight || 0 }} кг • отдых {{ ex.rest || 0 }}с</span>
+                        </div>
+                        <div class="exercise-actions">
+                            <button class="btn btn-success" @click.stop="completeSet(i)"><i class="fas fa-check"></i> Подход</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Статистика -->
+            <section id="statsSection" class="stats-section" :class="{ hidden: view!=='stats' }">
+                <div class="stats-header">
+                    <h2>Статистика тренировок</h2>
+                    <button id="closeStatsBtn" class="btn btn-close" @click="closeStats">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="stats-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Всего тренировок</h3>
+                            <span id="totalWorkouts" class="stat-number">{{ stats.totalWorkouts }}</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Общее время</h3>
+                            <span id="totalTime" class="stat-number">{{ stats.totalMinutes }} мин</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Любимое упражнение</h3>
+                            <span id="favoriteExercise" class="stat-text">{{ stats.favoriteExercise || '-' }}</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Последняя тренировка</h3>
+                            <span id="lastWorkout" class="stat-text">{{ stats.lastWorkout || '-' }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="workout-history">
+                        <h3>История тренировок</h3>
+                        <div id="workoutHistory" class="history-list">
+                            <div class="history-item" v-for="h in history" :key="h.id">
+                                <div class="history-info">
+                                    <div class="history-date">{{ h.name }}</div>
+                                    <div class="history-duration">Длительность: {{ Math.round(h.duration/60) }} мин</div>
+                                </div>
+                                <div>{{ new Date(h.date).toLocaleString() }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Модальное окно для упражнений -->
+    <div id="exerciseModal" class="modal" :class="{ hidden: !showLibrary }">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Библиотека упражнений</h3>
+                <button id="closeModalBtn" class="btn btn-close" @click="showLibrary=false">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="exercise-categories">
+                    <button class="category-btn" :class="{active: libraryFilter==='all'}" @click="libraryFilter='all'">Все</button>
+                    <button class="category-btn" :class="{active: libraryFilter==='strength'}" @click="libraryFilter='strength'">Силовые</button>
+                    <button class="category-btn" :class="{active: libraryFilter==='cardio'}" @click="libraryFilter='cardio'">Кардио</button>
+                    <button class="category-btn" :class="{active: libraryFilter==='flexibility'}" @click="libraryFilter='flexibility'">Растяжка</button>
+                </div>
+                <div id="exerciseLibrary" class="exercise-library">
+                    <div class="library-exercise" v-for="e in filteredLibrary" :key="e.id" @click="addExerciseFromLibrary(e)">
+                        <h4>{{ e.name }}</h4>
+                        <p>{{ e.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="training.js"></script>
+</body>
+</html>
